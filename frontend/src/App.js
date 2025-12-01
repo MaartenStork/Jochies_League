@@ -1,0 +1,264 @@
+import React, { useState, useEffect, useCallback } from 'react';
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [checkedIn, setCheckedIn] = useState(false);
+  const [checkInTime, setCheckInTime] = useState(null);
+  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboardDate, setLeaderboardDate] = useState('');
+  const [checkingIn, setCheckingIn] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [gettingLocation, setGettingLocation] = useState(false);
+
+  // Fetch current user
+  const fetchUser = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/auth/user`, { credentials: 'include' });
+      const data = await res.json();
+      if (data.authenticated) {
+        setUser(data.user);
+      }
+    } catch (err) {
+      console.error('Error fetching user:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch check-in status
+  const fetchStatus = useCallback(async () => {
+    if (!user) return;
+    try {
+      const res = await fetch(`${API_URL}/api/status`, { credentials: 'include' });
+      const data = await res.json();
+      if (data.checked_in) {
+        setCheckedIn(true);
+        setCheckInTime(data.check_in_time);
+      }
+    } catch (err) {
+      console.error('Error fetching status:', err);
+    }
+  }, [user]);
+
+  // Fetch leaderboard
+  const fetchLeaderboard = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/leaderboard`);
+      const data = await res.json();
+      setLeaderboard(data.leaderboard);
+      setLeaderboardDate(data.date);
+    } catch (err) {
+      console.error('Error fetching leaderboard:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+    fetchLeaderboard();
+  }, [fetchUser, fetchLeaderboard]);
+
+  useEffect(() => {
+    if (user) {
+      fetchStatus();
+    }
+  }, [user, fetchStatus]);
+
+  const handleLogin = () => {
+    window.location.href = `${API_URL}/auth/login`;
+  };
+
+  const handleLogout = () => {
+    window.location.href = `${API_URL}/auth/logout`;
+  };
+
+  const handleCheckIn = async () => {
+    if (checkedIn || checkingIn) return;
+
+    setGettingLocation(true);
+    setMessage(null);
+
+    // Get current location
+    if (!navigator.geolocation) {
+      setMessage({ type: 'error', text: 'Geolocation is not supported by your browser' });
+      setGettingLocation(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        setGettingLocation(false);
+        setCheckingIn(true);
+
+        const { latitude, longitude } = position.coords;
+
+        try {
+          const res = await fetch(`${API_URL}/api/checkin`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ latitude, longitude }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            setCheckedIn(true);
+            setCheckInTime(data.check_in_time);
+            setMessage({ 
+              type: 'success', 
+              text: `✓ Checked in! Distance: ${data.distance}m from Science Park` 
+            });
+            fetchLeaderboard(); // Refresh leaderboard
+          } else {
+            setMessage({ 
+              type: 'error', 
+              text: data.error === 'Too far from Science Park' 
+                ? `✗ You're ${data.distance}m away. Get within ${data.allowed_radius}m!`
+                : data.error 
+            });
+          }
+        } catch (err) {
+          setMessage({ type: 'error', text: 'Failed to check in. Try again.' });
+        } finally {
+          setCheckingIn(false);
+        }
+      },
+      (error) => {
+        setGettingLocation(false);
+        let errorMsg = 'Failed to get location';
+        if (error.code === 1) errorMsg = 'Location access denied. Enable location permissions!';
+        if (error.code === 2) errorMsg = 'Location unavailable. Try again.';
+        if (error.code === 3) errorMsg = 'Location request timed out. Try again.';
+        setMessage({ type: 'error', text: errorMsg });
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  };
+
+  const formatTime = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString('nl-NL', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('nl-NL', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long'
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="app">
+        <div className="spinner" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="app">
+      <header className="header">
+        <h1 className="logo">Jochies League</h1>
+        <p className="tagline">Race to Science Park! 🏃‍♂️</p>
+      </header>
+
+      {user ? (
+        <>
+          <div className="user-card">
+            <img src={user.picture} alt={user.name} className="user-avatar" />
+            <div className="user-info">
+              <div className="user-name">{user.name}</div>
+              <div className="user-email">{user.email}</div>
+            </div>
+            <button className="logout-btn" onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
+
+          <div className="checkin-section">
+            <button
+              className={`checkin-btn ${checkedIn ? 'checked' : ''} ${(checkingIn || gettingLocation) ? 'loading' : ''}`}
+              onClick={handleCheckIn}
+              disabled={checkedIn || checkingIn || gettingLocation}
+            >
+              <span className="checkin-icon">
+                {checkedIn ? '✓' : gettingLocation ? '📍' : checkingIn ? '⏳' : '🎯'}
+              </span>
+              {checkedIn 
+                ? 'Checked In!' 
+                : gettingLocation 
+                  ? 'Getting Location...' 
+                  : checkingIn 
+                    ? 'Checking In...' 
+                    : 'I am at Science Park'}
+            </button>
+
+            {message && (
+              <div className={`checkin-status ${message.type}`}>
+                {message.text}
+              </div>
+            )}
+
+            {checkedIn && checkInTime && (
+              <div className="checkin-status success">
+                Checked in at {formatTime(checkInTime)}
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        <div className="login-section">
+          <button className="login-btn" onClick={handleLogin}>
+            <svg viewBox="0 0 24 24">
+              <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Sign in with Google
+          </button>
+        </div>
+      )}
+
+      <div className="leaderboard">
+        <h2 className="leaderboard-title">
+          🏆 Today's Leaderboard
+          <span className="leaderboard-date">{leaderboardDate && formatDate(leaderboardDate)}</span>
+        </h2>
+
+        {leaderboard.length === 0 ? (
+          <div className="leaderboard-empty">
+            No check-ins yet today. Be the first! 🥇
+          </div>
+        ) : (
+          leaderboard.map((entry) => (
+            <div key={entry.rank} className="leaderboard-entry">
+              <div className={`rank rank-${entry.rank <= 3 ? entry.rank : 'other'}`}>
+                {entry.rank <= 3 ? ['🥇', '🥈', '🥉'][entry.rank - 1] : entry.rank}
+              </div>
+              {entry.picture && (
+                <img src={entry.picture} alt={entry.name} className="entry-avatar" />
+              )}
+              <div className="entry-info">
+                <div className="entry-name">{entry.name}</div>
+              </div>
+              <div className="entry-time">{formatTime(entry.check_in_time)}</div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
