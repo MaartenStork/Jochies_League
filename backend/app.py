@@ -107,6 +107,13 @@ def cleanup_old_photos():
     if old_checkins:
         db.session.commit()
 
+# ============ ROOT ROUTE ============
+
+@app.route('/')
+def index():
+    """Redirect to frontend."""
+    return redirect(frontend_url)
+
 # ============ AUTH ROUTES ============
 
 @app.route('/auth/login')
@@ -118,31 +125,35 @@ def login():
 @app.route('/auth/callback')
 def auth_callback():
     """Handle Google OAuth callback."""
-    token = google.authorize_access_token()
-    user_info = token.get('userinfo')
-    
-    if not user_info:
+    try:
+        token = google.authorize_access_token()
+        user_info = token.get('userinfo')
+        
+        if not user_info:
+            return redirect(f"{frontend_url}?error=auth_failed")
+        
+        # Find or create user
+        user = User.query.get(user_info['sub'])
+        if not user:
+            user = User(
+                id=user_info['sub'],
+                email=user_info['email'],
+                name=user_info['name'],
+                picture=user_info.get('picture')
+            )
+            db.session.add(user)
+            db.session.commit()
+        else:
+            # Update user info
+            user.name = user_info['name']
+            user.picture = user_info.get('picture')
+            db.session.commit()
+        
+        login_user(user)
+        return redirect(frontend_url)
+    except Exception as e:
+        print(f"OAuth error: {e}")
         return redirect(f"{frontend_url}?error=auth_failed")
-    
-    # Find or create user
-    user = User.query.get(user_info['sub'])
-    if not user:
-        user = User(
-            id=user_info['sub'],
-            email=user_info['email'],
-            name=user_info['name'],
-            picture=user_info.get('picture')
-        )
-        db.session.add(user)
-        db.session.commit()
-    else:
-        # Update user info
-        user.name = user_info['name']
-        user.picture = user_info.get('picture')
-        db.session.commit()
-    
-    login_user(user)
-    return redirect(frontend_url)
 
 @app.route('/auth/logout')
 def logout():
