@@ -41,7 +41,11 @@ db.init_app(app)
 
 # CORS - allow frontend origin
 frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
-CORS(app, supports_credentials=True, origins=[frontend_url, 'http://localhost:3000'])
+CORS(app, 
+     supports_credentials=True, 
+     origins=[frontend_url, 'http://localhost:3000'],
+     allow_headers=['Content-Type', 'Authorization'],
+     methods=['GET', 'POST', 'OPTIONS'])
 
 # Login manager
 login_manager = LoginManager()
