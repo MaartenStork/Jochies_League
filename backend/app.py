@@ -335,6 +335,15 @@ def health():
 
 with app.app_context():
     db.create_all()
+    
+    # Add photo_data column if it doesn't exist (migration for existing DBs)
+    from sqlalchemy import inspect, text
+    inspector = inspect(db.engine)
+    columns = [col['name'] for col in inspector.get_columns('checkins')]
+    if 'photo_data' not in columns:
+        with db.engine.connect() as conn:
+            conn.execute(text('ALTER TABLE checkins ADD COLUMN photo_data TEXT'))
+            conn.commit()
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
