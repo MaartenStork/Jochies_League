@@ -647,3 +647,64 @@ body::before {
     padding: 1rem;
   }
 }
+
+/* ============ FLYING JOB EASTER EGG ============ */
+.flying-job {
+  position: fixed;
+  width: 80px;
+  height: 80px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 9999;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.1s;
+  /* Try to hide black background - remove this if you use remove.bg */
+  mix-blend-mode: screen;
+}
+
+.flying-job:hover {
+  transform: translateY(-50%) scale(1.2);
+}
+
+.flying-job:active {
+  transform: translateY(-50%) scale(0.9);
+}
+
+.flying-job.from-left {
+  animation: flyFromLeft 3s linear forwards;
+}
+
+.flying-job.from-right {
+  animation: flyFromRight 3s linear forwards;
+}
+
+@keyframes flyFromLeft {
+  0% {
+    left: -100px;
+    transform: translateY(-50%) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-50%) rotate(180deg);
+  }
+  100% {
+    left: calc(100% + 100px);
+    transform: translateY(-50%) rotate(360deg);
+  }
+}
+
+@keyframes flyFromRight {
+  0% {
+    right: -100px;
+    left: auto;
+    transform: translateY(-50%) rotate(0deg) scaleX(-1);
+  }
+  50% {
+    transform: translateY(-50%) rotate(-180deg) scaleX(-1);
+  }
+  100% {
+    right: calc(100% + 100px);
+    left: auto;
+    transform: translateY(-50%) rotate(-360deg) scaleX(-1);
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import confetti from 'canvas-confetti';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -32,6 +33,10 @@ function App() {
   const [stream, setStream] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+
+  // Flying Job state
+  const [showFlyingJob, setShowFlyingJob] = useState(false);
+  const [jobPosition, setJobPosition] = useState({ fromLeft: true });
 
   // Check for auth token in URL on first load
   useEffect(() => {
@@ -111,6 +116,35 @@ function App() {
       }
     };
   }, [stream]);
+
+  // Flying Job easter egg - appears every 5 seconds (change this later!)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setJobPosition({ fromLeft: Math.random() > 0.5 });
+      setShowFlyingJob(true);
+      // Hide after animation completes (3 seconds)
+      setTimeout(() => setShowFlyingJob(false), 3000);
+    }, 5000); // Every 5 seconds - change this to make it rarer!
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleJobClick = () => {
+    // Confetti from both bottom corners!
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { x: 0, y: 1 },
+      angle: 45
+    });
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { x: 1, y: 1 },
+      angle: 135
+    });
+    setShowFlyingJob(false);
+  };
 
   const handleLogin = () => {
     window.location.href = `${API_URL}/auth/login`;
@@ -446,6 +480,16 @@ function App() {
             ))}
           </div>
         </div>
+      )}
+
+      {/* Flying Job Easter Egg */}
+      {showFlyingJob && (
+        <img
+          src="/JobLabubu.png"
+          alt="Job"
+          className={`flying-job ${jobPosition.fromLeft ? 'from-left' : 'from-right'}`}
+          onClick={handleJobClick}
+        />
       )}
     </div>
   );
