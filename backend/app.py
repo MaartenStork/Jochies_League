@@ -104,6 +104,8 @@ def api_login_required(f):
         # Check token header (mobile fallback)
         user = get_user_from_token()
         if user:
+            # Log in the user so current_user works in route handlers
+            login_user(user)
             return f(*args, **kwargs)
         return jsonify({'error': 'Not authenticated'}), 401
     return decorated_function
