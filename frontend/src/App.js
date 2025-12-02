@@ -208,16 +208,21 @@ function App() {
 
   // Touch drag for mobile
   const handleBTouchStart = (e) => {
+    e.preventDefault();
     setIsDraggingB(true);
   };
 
   const handleBTouchMove = (e) => {
+    e.preventDefault();
     if (!bRef.current) return;
     const touch = e.touches[0];
     bRef.current.style.position = 'fixed';
-    bRef.current.style.left = `${touch.clientX - 15}px`;
-    bRef.current.style.top = `${touch.clientY - 15}px`;
+    bRef.current.style.left = `${touch.clientX - 20}px`;
+    bRef.current.style.top = `${touch.clientY - 20}px`;
     bRef.current.style.zIndex = '10000';
+    bRef.current.style.fontSize = '2rem';
+    bRef.current.style.color = '#ffd700';
+    bRef.current.style.textShadow = '0 0 20px #ffd700';
   };
 
   const handleBTouchEnd = (e) => {
@@ -225,11 +230,13 @@ function App() {
     const touch = e.changedTouches[0];
     const dropRect = dropZoneRef.current.getBoundingClientRect();
     
+    // Add some tolerance (50px extra on each side)
+    const tolerance = 50;
     if (
-      touch.clientX >= dropRect.left &&
-      touch.clientX <= dropRect.right &&
-      touch.clientY >= dropRect.top &&
-      touch.clientY <= dropRect.bottom
+      touch.clientX >= dropRect.left - tolerance &&
+      touch.clientX <= dropRect.right + tolerance &&
+      touch.clientY >= dropRect.top - tolerance &&
+      touch.clientY <= dropRect.bottom + tolerance
     ) {
       setBPlaced(true);
       confetti({
@@ -245,6 +252,9 @@ function App() {
     bRef.current.style.left = '';
     bRef.current.style.top = '';
     bRef.current.style.zIndex = '';
+    bRef.current.style.fontSize = '';
+    bRef.current.style.color = '';
+    bRef.current.style.textShadow = '';
     setIsDraggingB(false);
   };
 
@@ -564,8 +574,8 @@ function App() {
       {leaderboard.length > 0 && (
         <div className="feed-section">
           <h2 className="feed-title">
-            📷 Today's {bPlaced ? '' : (
-              <span
+            📷 Today's {bPlaced ? 'atch' : (
+              <><span
                 ref={bRef}
                 className={`draggable-b ${isDraggingB ? 'dragging' : ''}`}
                 draggable={!bPlaced}
@@ -574,10 +584,8 @@ function App() {
                 onTouchStart={handleBTouchStart}
                 onTouchMove={handleBTouchMove}
                 onTouchEnd={handleBTouchEnd}
-              >
-                B
-              </span>
-            )}atch
+              >B</span>atch</>
+            )}
           </h2>
           
           <div className="feed">

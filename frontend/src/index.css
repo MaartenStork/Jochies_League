@@ -799,43 +799,58 @@ body::before {
 /* ============ DRAGGABLE B EASTER EGG ============ */
 .draggable-b {
   cursor: grab;
-  display: inline-block;
-  transition: transform 0.2s, color 0.2s;
+  display: inline;
+  transition: transform 0.2s, color 0.2s, text-shadow 0.2s;
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
+  position: relative;
 }
 
 .draggable-b:hover {
   color: var(--gold);
-  transform: scale(1.2);
+  text-shadow: 0 0 10px var(--gold);
 }
 
 .draggable-b.dragging {
   cursor: grabbing;
-  opacity: 0.5;
-  transform: scale(1.3);
+  opacity: 0.3;
 }
 
 .b-drop-zone {
   display: inline-block;
-  min-width: 0;
+  min-width: 4px;
+  min-height: 1em;
   transition: all 0.3s;
+  vertical-align: baseline;
+  position: relative;
 }
 
 .b-drop-zone.active {
-  min-width: 0.5em;
-  background: rgba(0, 255, 136, 0.3);
-  border-radius: 4px;
+  min-width: 1.2em;
+  padding: 0 4px;
+  background: rgba(0, 255, 136, 0.4);
+  border-radius: 6px;
+  margin: 0 2px;
   animation: pulseGlow 0.5s ease-in-out infinite;
+}
+
+.b-drop-zone.active::after {
+  content: 'b';
+  opacity: 0.4;
 }
 
 .b-drop-zone.has-b {
   color: var(--gold);
   animation: none;
+  text-shadow: 0 0 15px var(--gold);
+}
+
+.b-drop-zone.has-b::after {
+  content: none;
 }
 
 @keyframes pulseGlow {
   0%, 100% { box-shadow: 0 0 10px var(--accent-glow); }
-  50% { box-shadow: 0 0 20px var(--accent-glow), 0 0 30px var(--accent-glow); }
+  50% { box-shadow: 0 0 25px var(--accent-glow), 0 0 40px var(--accent-glow); }
 }
