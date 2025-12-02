@@ -1249,18 +1249,15 @@ body::before {
   min-height: 80vh;
   object-fit: cover;
   z-index: 1;
-  animation: ian-opacity-ramp 2s ease-in forwards;
+  animation: ian-fade-in 1.5s ease-out forwards;
 }
 
-@keyframes ian-opacity-ramp {
+@keyframes ian-fade-in {
   0% {
-    opacity: 0.3;
-  }
-  80% {
-    opacity: 0.9;
+    opacity: 0.6;
   }
   100% {
-    opacity: 1;
+    opacity: 0.9;
   }
 }
 

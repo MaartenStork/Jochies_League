@@ -906,14 +906,12 @@ function App() {
       {showIanFlashbang && (
         <div className={`ian-flashbang-overlay ${ianFadingOut ? 'fading-out' : ''}`}>
           <div className="ian-flashbang-flash" />
-          <picture key={ianGifKey}>
-            <source srcSet={`/ianmorph/ian_morph.webp?v=${ianGifKey}`} type="image/webp" />
-            <img 
-              src={`/ianmorph/ian_morph.gif?v=${ianGifKey}`}
-              alt="Ian Morph"
-              className="ian-flashbang-img"
-            />
-          </picture>
+          <img 
+            key={ianGifKey}
+            src="/ianmorph/ian_morph.gif"
+            alt="Ian Morph"
+            className="ian-flashbang-img"
+          />
         </div>
       )}
 
