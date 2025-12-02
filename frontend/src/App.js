@@ -62,6 +62,7 @@ function App() {
   // Ian flashbang easter egg
   const [showIanFlashbang, setShowIanFlashbang] = useState(false);
   const [ianFadingOut, setIanFadingOut] = useState(false);
+  const [ianGifKey, setIanGifKey] = useState(0); // Force GIF reload each time
 
   // Check for auth token in URL on first load
   useEffect(() => {
@@ -311,15 +312,16 @@ function App() {
         setCheatMessage('♟️ CHESS TIME!');
         break;
       case 'ian':
+        setIanGifKey(prev => prev + 1); // Force GIF reload
         setShowIanFlashbang(true);
         setIanFadingOut(false);
         setCheatMessage('💥 FLASHBANG!');
-        // Start fade-out after morph completes (2s), then remove after fade (1s)
-        setTimeout(() => setIanFadingOut(true), 2000);
+        // GIF is 2s, wait extra 1s on final frame, then fade out over 1s
+        setTimeout(() => setIanFadingOut(true), 3000);
         setTimeout(() => {
           setShowIanFlashbang(false);
           setIanFadingOut(false);
-        }, 3000);
+        }, 4000);
         break;
       case 'reset':
         document.body.style.setProperty('--accent', '#00ff88');
@@ -715,7 +717,7 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1 className="logo">Jo<span ref={dropZoneRef} className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`} onDragOver={handleDropZoneDragOver} onDrop={handleDropZoneDrop}>{bPlaced && 'b'}</span>chies League</h1>
+        <h1 className="logo">Jo<span ref={dropZoneRef} className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`} onDragOver={handleDropZoneDragOver} onDrop={handleDropZoneDrop}>{bPlaced && 'b'}</span>{bPlaced ? ' chies' : 'chies'} League</h1>
         <p className="tagline">Race to Science Park! 🏃‍♂️</p>
         
         {/* Profile icon - top right */}
@@ -904,10 +906,10 @@ function App() {
       {showIanFlashbang && (
         <div className={`ian-flashbang-overlay ${ianFadingOut ? 'fading-out' : ''}`}>
           <div className="ian-flashbang-flash" />
-          <picture>
-            <source srcSet="/ianmorph/ian_morph.webp" type="image/webp" />
+          <picture key={ianGifKey}>
+            <source srcSet={`/ianmorph/ian_morph.webp?v=${ianGifKey}`} type="image/webp" />
             <img 
-              src="/ianmorph/ian_morph.gif" 
+              src={`/ianmorph/ian_morph.gif?v=${ianGifKey}`}
               alt="Ian Morph"
               className="ian-flashbang-img"
             />
