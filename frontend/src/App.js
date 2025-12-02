@@ -82,6 +82,9 @@ function App() {
   // Rabbit clock (late check-in after 12:00)
   const [showRabbitClock, setShowRabbitClock] = useState(false);
 
+  // FNAF jumpscare easter egg
+  const [showFnaf, setShowFnaf] = useState(false);
+
   // Ranking game easter egg
   const [showRanking, setShowRanking] = useState(false);
   const [rankingAnswers, setRankingAnswers] = useState({1: null, 2: null, 3: null, 4: null, 5: null, 6: null});
@@ -435,6 +438,11 @@ function App() {
       case 'konijn':
         setShowRabbitClock(true);
         setTimeout(() => setShowRabbitClock(false), 2200);
+        break;
+      case 'fnaf':
+      case 'freddy':
+      case 'jumpscare':
+        setShowFnaf(true);
         break;
       case 'smiling friends':
       case 'smilingfriends':
@@ -1162,6 +1170,20 @@ function App() {
             alt="Ian Morph"
             className="ian-flashbang-img"
           />
+        </div>
+      )}
+
+      {/* FNAF Jumpscare Easter Egg */}
+      {showFnaf && (
+        <div className="fnaf-overlay" onClick={() => setShowFnaf(false)}>
+          <video
+            className="fnaf-video"
+            autoPlay
+            playsInline
+            onEnded={() => setShowFnaf(false)}
+          >
+            <source src="/FOX.mp4" type="video/mp4" />
+          </video>
         </div>
       )}
 
