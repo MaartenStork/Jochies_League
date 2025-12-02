@@ -671,129 +671,144 @@ body::before {
 
 /* ===== STRAIGHT TRAJECTORY ===== */
 .flying-job-wrapper.from-left.trajectory-straight {
+  left: -120px;
   animation: straightLeft var(--duration, 3s) linear forwards;
 }
 .flying-job-wrapper.from-right.trajectory-straight {
+  right: -120px;
+  left: auto;
   animation: straightRight var(--duration, 3s) linear forwards;
 }
 
 @keyframes straightLeft {
   0% { left: -120px; top: var(--start-y); transform: rotate(0deg); }
-  100% { left: calc(100% + 120px); top: var(--end-y); transform: rotate(720deg); }
+  100% { left: calc(100vw + 120px); top: var(--end-y); transform: rotate(720deg); }
 }
 @keyframes straightRight {
-  0% { right: -120px; left: auto; top: var(--start-y); transform: scaleX(-1) rotate(0deg); }
-  100% { right: calc(100% + 120px); left: auto; top: var(--end-y); transform: scaleX(-1) rotate(-720deg); }
+  0% { right: -120px; top: var(--start-y); transform: scaleX(-1) rotate(0deg); }
+  100% { right: calc(100vw + 120px); top: var(--end-y); transform: scaleX(-1) rotate(-720deg); }
 }
 
 /* ===== WAVY TRAJECTORY ===== */
 .flying-job-wrapper.from-left.trajectory-wavy {
+  left: -120px;
   animation: wavyLeft var(--duration, 3s) linear forwards;
 }
 .flying-job-wrapper.from-right.trajectory-wavy {
+  right: -120px;
+  left: auto;
   animation: wavyRight var(--duration, 3s) linear forwards;
 }
 
 @keyframes wavyLeft {
   0% { left: -120px; top: var(--start-y); transform: rotate(0deg); }
-  20% { top: calc(var(--start-y) - 15%); transform: rotate(72deg); }
-  40% { top: calc(var(--start-y) + 10%); transform: rotate(144deg); }
-  60% { top: calc(var(--end-y) - 10%); transform: rotate(216deg); }
-  80% { top: calc(var(--end-y) + 15%); transform: rotate(288deg); }
-  100% { left: calc(100% + 120px); top: var(--end-y); transform: rotate(360deg); }
+  20% { left: 20vw; top: calc(var(--start-y) - 15vh); transform: rotate(72deg); }
+  40% { left: 40vw; top: calc(var(--start-y) + 10vh); transform: rotate(144deg); }
+  60% { left: 60vw; top: calc(var(--end-y) - 10vh); transform: rotate(216deg); }
+  80% { left: 80vw; top: calc(var(--end-y) + 15vh); transform: rotate(288deg); }
+  100% { left: calc(100vw + 120px); top: var(--end-y); transform: rotate(360deg); }
 }
 @keyframes wavyRight {
-  0% { right: -120px; left: auto; top: var(--start-y); transform: scaleX(-1) rotate(0deg); }
-  20% { top: calc(var(--start-y) + 15%); transform: scaleX(-1) rotate(-72deg); }
-  40% { top: calc(var(--start-y) - 10%); transform: scaleX(-1) rotate(-144deg); }
-  60% { top: calc(var(--end-y) + 10%); transform: scaleX(-1) rotate(-216deg); }
-  80% { top: calc(var(--end-y) - 15%); transform: scaleX(-1) rotate(-288deg); }
-  100% { right: calc(100% + 120px); left: auto; top: var(--end-y); transform: scaleX(-1) rotate(-360deg); }
+  0% { right: -120px; top: var(--start-y); transform: scaleX(-1) rotate(0deg); }
+  20% { right: 20vw; top: calc(var(--start-y) + 15vh); transform: scaleX(-1) rotate(-72deg); }
+  40% { right: 40vw; top: calc(var(--start-y) - 10vh); transform: scaleX(-1) rotate(-144deg); }
+  60% { right: 60vw; top: calc(var(--end-y) + 10vh); transform: scaleX(-1) rotate(-216deg); }
+  80% { right: 80vw; top: calc(var(--end-y) - 15vh); transform: scaleX(-1) rotate(-288deg); }
+  100% { right: calc(100vw + 120px); top: var(--end-y); transform: scaleX(-1) rotate(-360deg); }
 }
 
 /* ===== LOOP TRAJECTORY ===== */
 .flying-job-wrapper.from-left.trajectory-loop {
+  left: -120px;
   animation: loopLeft var(--duration, 3s) ease-in-out forwards;
 }
 .flying-job-wrapper.from-right.trajectory-loop {
+  right: -120px;
+  left: auto;
   animation: loopRight var(--duration, 3s) ease-in-out forwards;
 }
 
 @keyframes loopLeft {
   0% { left: -120px; top: var(--start-y); transform: rotate(0deg) scale(1); }
-  25% { left: 30%; top: calc(var(--start-y) - 20%); transform: rotate(180deg) scale(1.3); }
-  50% { left: 40%; top: calc(var(--start-y) + 5%); transform: rotate(540deg) scale(0.8); }
-  75% { left: 60%; top: calc(var(--end-y) - 10%); transform: rotate(720deg) scale(1.2); }
-  100% { left: calc(100% + 120px); top: var(--end-y); transform: rotate(1080deg) scale(1); }
+  25% { left: 25vw; top: calc(var(--start-y) - 20vh); transform: rotate(180deg) scale(1.3); }
+  50% { left: 45vw; top: calc(var(--start-y) + 5vh); transform: rotate(540deg) scale(0.8); }
+  75% { left: 70vw; top: calc(var(--end-y) - 10vh); transform: rotate(720deg) scale(1.2); }
+  100% { left: calc(100vw + 120px); top: var(--end-y); transform: rotate(1080deg) scale(1); }
 }
 @keyframes loopRight {
-  0% { right: -120px; left: auto; top: var(--start-y); transform: scaleX(-1) rotate(0deg) scale(1); }
-  25% { right: 30%; top: calc(var(--start-y) + 20%); transform: scaleX(-1) rotate(-180deg) scale(1.3); }
-  50% { right: 40%; top: calc(var(--start-y) - 5%); transform: scaleX(-1) rotate(-540deg) scale(0.8); }
-  75% { right: 60%; top: calc(var(--end-y) + 10%); transform: scaleX(-1) rotate(-720deg) scale(1.2); }
-  100% { right: calc(100% + 120px); left: auto; top: var(--end-y); transform: scaleX(-1) rotate(-1080deg) scale(1); }
+  0% { right: -120px; top: var(--start-y); transform: scaleX(-1) rotate(0deg) scale(1); }
+  25% { right: 25vw; top: calc(var(--start-y) + 20vh); transform: scaleX(-1) rotate(-180deg) scale(1.3); }
+  50% { right: 45vw; top: calc(var(--start-y) - 5vh); transform: scaleX(-1) rotate(-540deg) scale(0.8); }
+  75% { right: 70vw; top: calc(var(--end-y) + 10vh); transform: scaleX(-1) rotate(-720deg) scale(1.2); }
+  100% { right: calc(100vw + 120px); top: var(--end-y); transform: scaleX(-1) rotate(-1080deg) scale(1); }
 }
 
 /* ===== BOUNCE TRAJECTORY ===== */
 .flying-job-wrapper.from-left.trajectory-bounce {
+  left: -120px;
   animation: bounceLeft var(--duration, 3s) linear forwards;
 }
 .flying-job-wrapper.from-right.trajectory-bounce {
+  right: -120px;
+  left: auto;
   animation: bounceRight var(--duration, 3s) linear forwards;
 }
 
 @keyframes bounceLeft {
   0% { left: -120px; top: var(--start-y); transform: rotate(0deg); }
-  15% { top: 80%; transform: rotate(108deg) scaleY(0.8); }
-  30% { top: 20%; transform: rotate(216deg); }
-  45% { top: 75%; transform: rotate(324deg) scaleY(0.8); }
-  60% { top: 25%; transform: rotate(432deg); }
-  75% { top: 70%; transform: rotate(540deg) scaleY(0.8); }
-  100% { left: calc(100% + 120px); top: var(--end-y); transform: rotate(720deg); }
+  15% { left: 15vw; top: 75vh; transform: rotate(108deg) scaleY(0.8); }
+  30% { left: 30vw; top: 25vh; transform: rotate(216deg); }
+  45% { left: 45vw; top: 70vh; transform: rotate(324deg) scaleY(0.8); }
+  60% { left: 60vw; top: 30vh; transform: rotate(432deg); }
+  75% { left: 75vw; top: 65vh; transform: rotate(540deg) scaleY(0.8); }
+  100% { left: calc(100vw + 120px); top: var(--end-y); transform: rotate(720deg); }
 }
 @keyframes bounceRight {
-  0% { right: -120px; left: auto; top: var(--start-y); transform: scaleX(-1) rotate(0deg); }
-  15% { top: 80%; transform: scaleX(-1) rotate(-108deg) scaleY(0.8); }
-  30% { top: 20%; transform: scaleX(-1) rotate(-216deg); }
-  45% { top: 75%; transform: scaleX(-1) rotate(-324deg) scaleY(0.8); }
-  60% { top: 25%; transform: scaleX(-1) rotate(-432deg); }
-  75% { top: 70%; transform: scaleX(-1) rotate(-540deg) scaleY(0.8); }
-  100% { right: calc(100% + 120px); left: auto; top: var(--end-y); transform: scaleX(-1) rotate(-720deg); }
+  0% { right: -120px; top: var(--start-y); transform: scaleX(-1) rotate(0deg); }
+  15% { right: 15vw; top: 75vh; transform: scaleX(-1) rotate(-108deg) scaleY(0.8); }
+  30% { right: 30vw; top: 25vh; transform: scaleX(-1) rotate(-216deg); }
+  45% { right: 45vw; top: 70vh; transform: scaleX(-1) rotate(-324deg) scaleY(0.8); }
+  60% { right: 60vw; top: 30vh; transform: scaleX(-1) rotate(-432deg); }
+  75% { right: 75vw; top: 65vh; transform: scaleX(-1) rotate(-540deg) scaleY(0.8); }
+  100% { right: calc(100vw + 120px); top: var(--end-y); transform: scaleX(-1) rotate(-720deg); }
 }
 
 /* ===== SPIRAL TRAJECTORY ===== */
 .flying-job-wrapper.from-left.trajectory-spiral {
+  left: -120px;
   animation: spiralLeft var(--duration, 3s) linear forwards;
 }
 .flying-job-wrapper.from-right.trajectory-spiral {
+  right: -120px;
+  left: auto;
   animation: spiralRight var(--duration, 3s) linear forwards;
 }
 
 @keyframes spiralLeft {
   0% { left: -120px; top: var(--start-y); transform: rotate(0deg) scale(0.5); }
-  10% { top: calc(var(--start-y) - 10%); transform: rotate(144deg) scale(0.7); }
-  20% { top: calc(var(--start-y) + 5%); transform: rotate(288deg) scale(0.9); }
-  30% { top: calc(var(--start-y) - 15%); transform: rotate(432deg) scale(1.1); }
-  40% { top: calc(var(--start-y) + 10%); transform: rotate(576deg) scale(1.3); }
-  50% { top: 50%; transform: rotate(720deg) scale(1.5); }
-  60% { top: calc(var(--end-y) - 10%); transform: rotate(864deg) scale(1.3); }
-  70% { top: calc(var(--end-y) + 15%); transform: rotate(1008deg) scale(1.1); }
-  80% { top: calc(var(--end-y) - 5%); transform: rotate(1152deg) scale(0.9); }
-  90% { top: calc(var(--end-y) + 10%); transform: rotate(1296deg) scale(0.7); }
-  100% { left: calc(100% + 120px); top: var(--end-y); transform: rotate(1440deg) scale(1); }
+  10% { left: 10vw; top: calc(var(--start-y) - 10vh); transform: rotate(144deg) scale(0.7); }
+  20% { left: 20vw; top: calc(var(--start-y) + 5vh); transform: rotate(288deg) scale(0.9); }
+  30% { left: 30vw; top: calc(var(--start-y) - 15vh); transform: rotate(432deg) scale(1.1); }
+  40% { left: 40vw; top: calc(var(--start-y) + 10vh); transform: rotate(576deg) scale(1.3); }
+  50% { left: 50vw; top: 50vh; transform: rotate(720deg) scale(1.5); }
+  60% { left: 60vw; top: calc(var(--end-y) - 10vh); transform: rotate(864deg) scale(1.3); }
+  70% { left: 70vw; top: calc(var(--end-y) + 15vh); transform: rotate(1008deg) scale(1.1); }
+  80% { left: 80vw; top: calc(var(--end-y) - 5vh); transform: rotate(1152deg) scale(0.9); }
+  90% { left: 90vw; top: calc(var(--end-y) + 10vh); transform: rotate(1296deg) scale(0.7); }
+  100% { left: calc(100vw + 120px); top: var(--end-y); transform: rotate(1440deg) scale(1); }
 }
 @keyframes spiralRight {
-  0% { right: -120px; left: auto; top: var(--start-y); transform: scaleX(-1) rotate(0deg) scale(0.5); }
-  10% { top: calc(var(--start-y) + 10%); transform: scaleX(-1) rotate(-144deg) scale(0.7); }
-  20% { top: calc(var(--start-y) - 5%); transform: scaleX(-1) rotate(-288deg) scale(0.9); }
-  30% { top: calc(var(--start-y) + 15%); transform: scaleX(-1) rotate(-432deg) scale(1.1); }
-  40% { top: calc(var(--start-y) - 10%); transform: scaleX(-1) rotate(-576deg) scale(1.3); }
-  50% { top: 50%; transform: scaleX(-1) rotate(-720deg) scale(1.5); }
-  60% { top: calc(var(--end-y) + 10%); transform: scaleX(-1) rotate(-864deg) scale(1.3); }
-  70% { top: calc(var(--end-y) - 15%); transform: scaleX(-1) rotate(-1008deg) scale(1.1); }
-  80% { top: calc(var(--end-y) + 5%); transform: scaleX(-1) rotate(-1152deg) scale(0.9); }
-  90% { top: calc(var(--end-y) - 10%); transform: scaleX(-1) rotate(-1296deg) scale(0.7); }
-  100% { right: calc(100% + 120px); left: auto; top: var(--end-y); transform: scaleX(-1) rotate(-1440deg) scale(1); }
+  0% { right: -120px; top: var(--start-y); transform: scaleX(-1) rotate(0deg) scale(0.5); }
+  10% { right: 10vw; top: calc(var(--start-y) + 10vh); transform: scaleX(-1) rotate(-144deg) scale(0.7); }
+  20% { right: 20vw; top: calc(var(--start-y) - 5vh); transform: scaleX(-1) rotate(-288deg) scale(0.9); }
+  30% { right: 30vw; top: calc(var(--start-y) + 15vh); transform: scaleX(-1) rotate(-432deg) scale(1.1); }
+  40% { right: 40vw; top: calc(var(--start-y) - 10vh); transform: scaleX(-1) rotate(-576deg) scale(1.3); }
+  50% { right: 50vw; top: 50vh; transform: scaleX(-1) rotate(-720deg) scale(1.5); }
+  60% { right: 60vw; top: calc(var(--end-y) + 10vh); transform: scaleX(-1) rotate(-864deg) scale(1.3); }
+  70% { right: 70vw; top: calc(var(--end-y) - 15vh); transform: scaleX(-1) rotate(-1008deg) scale(1.1); }
+  80% { right: 80vw; top: calc(var(--end-y) + 5vh); transform: scaleX(-1) rotate(-1152deg) scale(0.9); }
+  90% { right: 90vw; top: calc(var(--end-y) - 10vh); transform: scaleX(-1) rotate(-1296deg) scale(0.7); }
+  100% { right: calc(100vw + 120px); top: var(--end-y); transform: scaleX(-1) rotate(-1440deg) scale(1); }
 }
 
 /* ============ DRAGGABLE B EASTER EGG ============ */
@@ -1020,7 +1035,7 @@ body::before {
 }
 
 .chess-square.light {
-  background: #e8d4b8;
+  background: #f0d9b5;
 }
 
 .chess-square.dark {
@@ -1034,6 +1049,17 @@ body::before {
 .chess-square.selected {
   background: var(--accent) !important;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Chess piece colors */
+.chess-piece-white {
+  color: #fff;
+  text-shadow: 0 0 2px #000, 0 0 2px #000, 0 0 2px #000;
+}
+
+.chess-piece-black {
+  color: #000;
+  text-shadow: none;
 }
 
 .chess-reset {

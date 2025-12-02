@@ -278,6 +278,11 @@ function App() {
     // Add your cheat codes here!
     switch(code) {
       case 'job':
+      case 'labubu':
+      case 'job labubu':
+      case 'labubu job':
+      case 'joblabubu':
+      case 'labubujob':
         setShowFlyingJob(true);
         setJobPosition({ 
           fromLeft: Math.random() > 0.5, 
@@ -329,8 +334,74 @@ function App() {
     return files[col] + (8 - row);
   };
 
+  // Chess AI - Simple but effective minimax
+  const pieceValues = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+  
+  const evaluateBoard = (game) => {
+    let score = 0;
+    const board = game.board();
+    for (let row of board) {
+      for (let piece of row) {
+        if (piece) {
+          const value = pieceValues[piece.type];
+          score += piece.color === 'w' ? value : -value;
+        }
+      }
+    }
+    return score;
+  };
+
+  const minimax = (game, depth, alpha, beta, isMaximizing) => {
+    if (depth === 0 || game.isGameOver()) {
+      return evaluateBoard(game);
+    }
+    const moves = game.moves();
+    if (isMaximizing) {
+      let maxEval = -Infinity;
+      for (let move of moves) {
+        game.move(move);
+        const evaluation = minimax(game, depth - 1, alpha, beta, false);
+        game.undo();
+        maxEval = Math.max(maxEval, evaluation);
+        alpha = Math.max(alpha, evaluation);
+        if (beta <= alpha) break;
+      }
+      return maxEval;
+    } else {
+      let minEval = Infinity;
+      for (let move of moves) {
+        game.move(move);
+        const evaluation = minimax(game, depth - 1, alpha, beta, true);
+        game.undo();
+        minEval = Math.min(minEval, evaluation);
+        beta = Math.min(beta, evaluation);
+        if (beta <= alpha) break;
+      }
+      return minEval;
+    }
+  };
+
+  const makeAIMove = (game) => {
+    const moves = game.moves();
+    if (moves.length === 0) return null;
+    
+    let bestMove = null;
+    let bestValue = Infinity;
+    
+    for (let move of moves) {
+      game.move(move);
+      const value = minimax(game, 2, -Infinity, Infinity, true);
+      game.undo();
+      if (value < bestValue) {
+        bestValue = value;
+        bestMove = move;
+      }
+    }
+    return bestMove;
+  };
+
   const handleSquareClick = (row, col) => {
-    if (!chess) return;
+    if (!chess || chess.turn() !== 'w') return; // Player is white
     const squareName = getSquareName(row, col);
     const piece = chess.get(squareName);
 
@@ -340,23 +411,39 @@ function App() {
         const move = chess.move({
           from: selectedSquare,
           to: squareName,
-          promotion: 'q' // Auto-promote to queen
+          promotion: 'q'
         });
         
         if (move) {
           setBoardState(chess.board());
+          setSelectedSquare(null);
           
-          // Check game status
+          // Check if player won
           if (chess.isCheckmate()) {
             setTimeout(() => {
               confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
-              alert(chess.turn() === 'w' ? '♚ Black wins!' : '♔ White wins!');
+              alert('♔ You win! Checkmate!');
             }, 100);
+            return;
           } else if (chess.isDraw()) {
             setTimeout(() => alert("It's a draw!"), 100);
+            return;
           }
           
-          setSelectedSquare(null);
+          // AI moves after short delay
+          setTimeout(() => {
+            const aiMove = makeAIMove(chess);
+            if (aiMove) {
+              chess.move(aiMove);
+              setBoardState(chess.board());
+              
+              if (chess.isCheckmate()) {
+                setTimeout(() => alert('♚ AI wins! Checkmate!'), 100);
+              } else if (chess.isDraw()) {
+                setTimeout(() => alert("It's a draw!"), 100);
+              }
+            }
+          }, 300);
           return;
         }
       } catch (e) {
@@ -365,8 +452,8 @@ function App() {
       setSelectedSquare(null);
     }
     
-    // Select a piece
-    if (piece && piece.color === chess.turn()) {
+    // Select a piece (only white)
+    if (piece && piece.color === 'w') {
       setSelectedSquare(squareName);
     } else {
       setSelectedSquare(null);
@@ -770,10 +857,10 @@ function App() {
             </div>
             <div className="chess-status">
               {chess && (chess.isCheckmate() ? 
-                (chess.turn() === 'w' ? '♚ Black wins!' : '♔ White wins!') :
+                (chess.turn() === 'w' ? '♚ AI wins!' : '♔ You win!') :
                 chess.isDraw() ? "Draw!" :
-                chess.isCheck() ? `${chess.turn() === 'w' ? 'White' : 'Black'} is in check!` :
-                `${chess.turn() === 'w' ? 'White' : 'Black'}'s turn`
+                chess.isCheck() ? `${chess.turn() === 'w' ? 'You are' : 'AI is'} in check!` :
+                chess.turn() === 'w' ? 'Your turn (White)' : 'AI thinking...'
               )}
             </div>
             <div className="chess-board">
@@ -789,7 +876,7 @@ function App() {
                         className={`chess-square ${isLight ? 'light' : 'dark'} ${isSelected ? 'selected' : ''}`}
                         onClick={() => handleSquareClick(rowIndex, colIndex)}
                       >
-                        {getPieceSymbol(piece)}
+                        {piece && <span className={`chess-piece-${piece.color === 'w' ? 'white' : 'black'}`}>{getPieceSymbol(piece)}</span>}
                       </div>
                     );
                   })}
