@@ -857,6 +857,10 @@ body::before {
 }
 
 /* ============ CHEAT CODE CONSOLE ============ */
+.cheat-backdrop {
+  display: none;
+}
+
 .cheat-console {
   position: fixed;
   bottom: 20px;
@@ -948,6 +952,69 @@ body::before {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile: Center the cheat console */
+@media (max-width: 768px) {
+  .cheat-backdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 8999;
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  .cheat-console {
+    bottom: 20px;
+    right: 10px;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+  }
+  
+  .cheat-console.open {
+    right: 10px;
+    bottom: auto;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .cheat-tab {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    font-size: 1.2rem;
+  }
+  
+  .cheat-console.open .cheat-tab {
+    display: none;
+  }
+  
+  .cheat-panel {
+    display: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    width: 280px;
+  }
+  
+  .cheat-console.open .cheat-panel {
+    display: block;
+  }
+  
+  .cheat-input {
+    font-size: 1.1rem;
+    padding: 14px 16px;
+  }
 }
 
 /* ============ CHESS GAME ============ */
@@ -1131,13 +1198,18 @@ body::before {
   }
 }
 
-.ian-flashbang-iframe {
+.ian-flashbang-img {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 100vw;
+  max-height: 100vh;
+  width: auto;
+  height: auto;
+  min-width: 80vw;
+  min-height: 80vh;
+  object-fit: cover;
   z-index: 1;
   animation: ian-opacity-ramp 2s ease-in forwards;
 }
@@ -1154,7 +1226,7 @@ body::before {
   }
 }
 
-.ian-flashbang-overlay.fading-out .ian-flashbang-iframe {
+.ian-flashbang-overlay.fading-out .ian-flashbang-img {
   animation: ian-fade-out 1s ease-out forwards;
 }
 

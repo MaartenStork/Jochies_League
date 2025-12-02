@@ -280,6 +280,7 @@ function App() {
     const code = cheatCode.toLowerCase().trim();
     
     // Add your cheat codes here!
+    let success = true;
     switch(code) {
       case 'job':
       case 'labubu':
@@ -309,7 +310,6 @@ function App() {
       case 'ian':
         setShowIanFlashbang(true);
         setIanFadingOut(false);
-        setCheatConsoleOpen(false);
         setCheatMessage('💥 FLASHBANG!');
         // Start fade-out after morph completes (2s), then remove after fade (1s)
         setTimeout(() => setIanFadingOut(true), 2000);
@@ -324,6 +324,16 @@ function App() {
         break;
       default:
         setCheatMessage('❌ Unknown code...');
+        success = false;
+    }
+    
+    // On successful cheat code, close console (dismisses keyboard on mobile)
+    if (success) {
+      setCheatConsoleOpen(false);
+      // Blur input to ensure keyboard dismisses on mobile
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
     }
     
     setCheatCode('');
@@ -844,12 +854,15 @@ function App() {
       )}
 
       {/* Cheat Code Console */}
+      {cheatConsoleOpen && (
+        <div className="cheat-backdrop" onClick={() => setCheatConsoleOpen(false)} />
+      )}
       <div className={`cheat-console ${cheatConsoleOpen ? 'open' : ''}`}>
         <div 
           className="cheat-tab"
           onClick={() => setCheatConsoleOpen(!cheatConsoleOpen)}
         >
-          <span className="cheat-tab-icon">{cheatConsoleOpen ? '▶' : '◀'}</span>
+          <span className="cheat-tab-icon">{cheatConsoleOpen ? '✕' : '⌨️'}</span>
         </div>
         <div className="cheat-panel">
           <form onSubmit={handleCheatSubmit}>
@@ -871,11 +884,14 @@ function App() {
       {showIanFlashbang && (
         <div className={`ian-flashbang-overlay ${ianFadingOut ? 'fading-out' : ''}`}>
           <div className="ian-flashbang-flash" />
-          <iframe 
-            src="/ianmorph/flashbang.html" 
-            title="Ian Morph"
-            className="ian-flashbang-iframe"
-          />
+          <picture>
+            <source srcSet="/ianmorph/ian_morph.webp" type="image/webp" />
+            <img 
+              src="/ianmorph/ian_morph.gif" 
+              alt="Ian Morph"
+              className="ian-flashbang-img"
+            />
+          </picture>
         </div>
       )}
 
