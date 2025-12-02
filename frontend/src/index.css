@@ -823,12 +823,17 @@ body::before {
 }
 
 .b-drop-zone.active {
-  padding: 0 0.4em;
+  padding: 0 0.3em;
 }
 
 .b-drop-zone.has-b {
   color: var(--gold);
   text-shadow: 0 0 15px var(--gold);
+  padding: 0;
+}
+
+.batch-word {
+  display: inline;
 }
 
 @keyframes pulseGlow {

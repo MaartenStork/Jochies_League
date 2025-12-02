@@ -270,10 +270,6 @@ function App() {
     
     // Add your cheat codes here!
     switch(code) {
-      case 'party':
-        confetti({ particleCount: 300, spread: 180, origin: { y: 0.6 } });
-        setCheatMessage('🎉 PARTY MODE!');
-        break;
       case 'job':
         setShowFlyingJob(true);
         setJobPosition({ 
@@ -285,10 +281,6 @@ function App() {
         });
         setTimeout(() => setShowFlyingJob(false), 3000);
         setCheatMessage('👋 JOB SAYS HI!');
-        break;
-      case 'gold':
-        document.body.style.setProperty('--accent', '#ffd700');
-        setCheatMessage('✨ GOLD MODE!');
         break;
       case 'reset':
         document.body.style.setProperty('--accent', '#00ff88');
@@ -517,18 +509,7 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1 className="logo">
-          Jo
-          <span 
-            ref={dropZoneRef}
-            className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`}
-            onDragOver={handleDropZoneDragOver}
-            onDrop={handleDropZoneDrop}
-          >
-            {bPlaced && 'b'}
-          </span>
-          chies League
-        </h1>
+        <h1 className="logo">Jo<span ref={dropZoneRef} className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`} onDragOver={handleDropZoneDragOver} onDrop={handleDropZoneDrop}>{bPlaced && 'b'}</span>chies League</h1>
         <p className="tagline">Race to Science Park! 🏃‍♂️</p>
       </header>
 
@@ -617,7 +598,7 @@ function App() {
       {/* Instagram-style Feed */}
       {leaderboard.length > 0 && (
         <div className="feed-section">
-          <h2 className="feed-title">📷 Today's {bPlaced ? 'atch' : <><span ref={bRef} className={`draggable-b ${isDraggingB ? 'dragging' : ''}`} draggable={!bPlaced} onDragStart={handleBDragStart} onDragEnd={handleBDragEnd} onTouchStart={handleBTouchStart} onTouchMove={handleBTouchMove} onTouchEnd={handleBTouchEnd}>B</span>atch</>}</h2>
+          <h2 className="feed-title">📷 Today's {bPlaced ? 'atch' : <span className="batch-word"><span ref={bRef} className={`draggable-b ${isDraggingB ? 'dragging' : ''}`} draggable={!bPlaced} onDragStart={handleBDragStart} onDragEnd={handleBDragEnd} onTouchStart={handleBTouchStart} onTouchMove={handleBTouchMove} onTouchEnd={handleBTouchEnd}>B</span>atch</span>}</h2>
           
           <div className="feed">
             {leaderboard.map((entry) => (
