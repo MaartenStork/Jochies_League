@@ -38,6 +38,12 @@ function App() {
   const [showFlyingJob, setShowFlyingJob] = useState(false);
   const [jobPosition, setJobPosition] = useState({ fromLeft: true });
 
+  // Draggable B easter egg
+  const [bPlaced, setBPlaced] = useState(false);
+  const [isDraggingB, setIsDraggingB] = useState(false);
+  const bRef = useRef(null);
+  const dropZoneRef = useRef(null);
+
   // Check for auth token in URL on first load
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -168,6 +174,78 @@ function App() {
       colors: ['#00ff88', '#ffd700', '#ff4466', '#00ddaa']
     });
     setShowFlyingJob(false);
+  };
+
+  // Draggable B handlers
+  const handleBDragStart = (e) => {
+    setIsDraggingB(true);
+    e.dataTransfer.setData('text/plain', 'B');
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleBDragEnd = () => {
+    setIsDraggingB(false);
+  };
+
+  const handleDropZoneDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDropZoneDrop = (e) => {
+    e.preventDefault();
+    if (e.dataTransfer.getData('text/plain') === 'B') {
+      setBPlaced(true);
+      // Celebration!
+      confetti({
+        particleCount: 200,
+        spread: 100,
+        origin: { x: 0.5, y: 0.3 },
+        colors: ['#00ff88', '#ffd700', '#ff4466', '#00ddaa']
+      });
+    }
+  };
+
+  // Touch drag for mobile
+  const handleBTouchStart = (e) => {
+    setIsDraggingB(true);
+  };
+
+  const handleBTouchMove = (e) => {
+    if (!bRef.current) return;
+    const touch = e.touches[0];
+    bRef.current.style.position = 'fixed';
+    bRef.current.style.left = `${touch.clientX - 15}px`;
+    bRef.current.style.top = `${touch.clientY - 15}px`;
+    bRef.current.style.zIndex = '10000';
+  };
+
+  const handleBTouchEnd = (e) => {
+    if (!bRef.current || !dropZoneRef.current) return;
+    const touch = e.changedTouches[0];
+    const dropRect = dropZoneRef.current.getBoundingClientRect();
+    
+    if (
+      touch.clientX >= dropRect.left &&
+      touch.clientX <= dropRect.right &&
+      touch.clientY >= dropRect.top &&
+      touch.clientY <= dropRect.bottom
+    ) {
+      setBPlaced(true);
+      confetti({
+        particleCount: 200,
+        spread: 100,
+        origin: { x: 0.5, y: 0.3 },
+        colors: ['#00ff88', '#ffd700', '#ff4466', '#00ddaa']
+      });
+    }
+    
+    // Reset position
+    bRef.current.style.position = '';
+    bRef.current.style.left = '';
+    bRef.current.style.top = '';
+    bRef.current.style.zIndex = '';
+    setIsDraggingB(false);
   };
 
   const handleLogin = () => {
@@ -385,7 +463,18 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1 className="logo">Jochies League</h1>
+        <h1 className="logo">
+          Jo
+          <span 
+            ref={dropZoneRef}
+            className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`}
+            onDragOver={handleDropZoneDragOver}
+            onDrop={handleDropZoneDrop}
+          >
+            {bPlaced && 'b'}
+          </span>
+          chies League
+        </h1>
         <p className="tagline">Race to Science Park! 🏃‍♂️</p>
       </header>
 
@@ -474,7 +563,22 @@ function App() {
       {/* Instagram-style Feed */}
       {leaderboard.length > 0 && (
         <div className="feed-section">
-          <h2 className="feed-title">📷 Today's Arrivals</h2>
+          <h2 className="feed-title">
+            📷 Today's {bPlaced ? '' : (
+              <span
+                ref={bRef}
+                className={`draggable-b ${isDraggingB ? 'dragging' : ''}`}
+                draggable={!bPlaced}
+                onDragStart={handleBDragStart}
+                onDragEnd={handleBDragEnd}
+                onTouchStart={handleBTouchStart}
+                onTouchMove={handleBTouchMove}
+                onTouchEnd={handleBTouchEnd}
+              >
+                B
+              </span>
+            )}atch
+          </h2>
           
           <div className="feed">
             {leaderboard.map((entry) => (
