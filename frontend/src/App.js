@@ -117,27 +117,37 @@ function App() {
     };
   }, [stream]);
 
-  // Flying Job easter egg - appears every 5 seconds (change this later!)
+  // Flying Job easter egg - appears randomly every 1-3 minutes
   useEffect(() => {
-    const interval = setInterval(() => {
-      // Random direction
-      const fromLeft = Math.random() > 0.5;
-      // Random start and end heights (10% to 80% of screen)
-      const startY = 10 + Math.random() * 70;
-      const endY = 10 + Math.random() * 70;
-      // Random trajectory type
-      const trajectories = ['straight', 'wavy', 'loop', 'bounce', 'spiral'];
-      const trajectory = trajectories[Math.floor(Math.random() * trajectories.length)];
-      // Random speed (2-4 seconds)
-      const duration = 2 + Math.random() * 2;
+    const scheduleNextJob = () => {
+      // Random interval between 1-3 minutes (60,000 - 180,000 ms)
+      const nextInterval = 60000 + Math.random() * 120000;
       
-      setJobPosition({ fromLeft, startY, endY, trajectory, duration });
-      setShowFlyingJob(true);
-      // Hide after animation completes
-      setTimeout(() => setShowFlyingJob(false), duration * 1000);
-    }, 5000); // Every 5 seconds - change this to make it rarer!
+      return setTimeout(() => {
+        // Random direction
+        const fromLeft = Math.random() > 0.5;
+        // Random start and end heights (10% to 80% of screen)
+        const startY = 10 + Math.random() * 70;
+        const endY = 10 + Math.random() * 70;
+        // Random trajectory type
+        const trajectories = ['straight', 'wavy', 'loop', 'bounce', 'spiral'];
+        const trajectory = trajectories[Math.floor(Math.random() * trajectories.length)];
+        // Random speed (2-4 seconds)
+        const duration = 2 + Math.random() * 2;
+        
+        setJobPosition({ fromLeft, startY, endY, trajectory, duration });
+        setShowFlyingJob(true);
+        // Hide after animation completes
+        setTimeout(() => setShowFlyingJob(false), duration * 1000);
+        
+        // Schedule next appearance
+        timeoutRef.current = scheduleNextJob();
+      }, nextInterval);
+    };
 
-    return () => clearInterval(interval);
+    const timeoutRef = { current: scheduleNextJob() };
+
+    return () => clearTimeout(timeoutRef.current);
   }, []);
 
   const handleJobClick = (e) => {
