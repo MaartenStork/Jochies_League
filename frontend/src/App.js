@@ -72,6 +72,9 @@ function App() {
   const [sfStaggered, setSfStaggered] = useState(false); // Stagger only for group spawn
   const [sfGroupActive, setSfGroupActive] = useState(false); // Block individual triggers during group
 
+  // Brainrot easter egg
+  const [showBrainrot, setShowBrainrot] = useState(false);
+
   // Ranking game easter egg
   const [showRanking, setShowRanking] = useState(false);
   const [rankingAnswers, setRankingAnswers] = useState({1: null, 2: null, 3: null, 4: null, 5: null, 6: null});
@@ -382,6 +385,11 @@ function App() {
         setRankingAnswers({1: null, 2: null, 3: null, 4: null, 5: null, 6: null});
         setRankingComplete(false);
         setRankingChecked(false);
+        break;
+      case 'brainrot':
+        setShowBrainrot(true);
+        // Auto-hide after 10 seconds
+        setTimeout(() => setShowBrainrot(false), 10000);
         break;
       case 'smiling friends':
       case 'smilingfriends':
@@ -827,7 +835,7 @@ function App() {
     <div className="app">
       <header className="header">
         <h1 className="logo">Jo<span ref={dropZoneRef} className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`} onDragOver={handleDropZoneDragOver} onDrop={handleDropZoneDrop}>{bPlaced && 'b'}</span>{bPlaced ? ' chies' : 'chies'} League</h1>
-        <p className="tagline">Race to Science Park! 🏃‍♂️</p>
+        <p className="tagline">SP grind time</p>
         
         {/* Profile icon - top right */}
         {user && (
@@ -1039,6 +1047,30 @@ function App() {
         </div>
       </div>
 
+      {/* Brainrot Easter Egg */}
+      {showBrainrot && (
+        <div className="brainrot-overlay" onClick={() => setShowBrainrot(false)}>
+          <video
+            className="brainrot-video brainrot-left"
+            autoPlay
+            loop
+            muted
+            playsInline
+          >
+            <source src="/brainrot/brainrot1.mp4" type="video/mp4" />
+          </video>
+          <video
+            className="brainrot-video brainrot-right"
+            autoPlay
+            loop
+            muted
+            playsInline
+          >
+            <source src="/brainrot/brainrot2.mp4" type="video/mp4" />
+          </video>
+        </div>
+      )}
+
       {/* Ian Flashbang Easter Egg */}
       {showIanFlashbang && (
         <div className={`ian-flashbang-overlay ${ianFadingOut ? 'fading-out' : ''}`}>
@@ -1089,11 +1121,11 @@ function App() {
               </div>
             </div>
 
-            <div className="ranking-names">
+            <div className="ranking-game-names">
               {getAvailableNames().map(name => (
                 <div
                   key={name}
-                  className="ranking-name"
+                  className="ranking-game-name"
                   draggable
                   onDragStart={(e) => e.dataTransfer.setData('text/plain', name)}
                 >

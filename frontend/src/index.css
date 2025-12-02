@@ -1488,7 +1488,7 @@ body::before {
 .ranking-dropzone.pos-5 { grid-column: 2; grid-row: 2; }
 .ranking-dropzone.pos-6 { grid-column: 3; grid-row: 2; }
 
-.ranking-names {
+.ranking-game-names {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -1496,7 +1496,7 @@ body::before {
   margin-bottom: 20px;
 }
 
-.ranking-name {
+.ranking-game-name {
   background: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 8px 14px;
@@ -1507,13 +1507,13 @@ body::before {
   user-select: none;
 }
 
-.ranking-name:hover {
+.ranking-game-name:hover {
   background: var(--bg-secondary);
   border-color: var(--accent);
   transform: scale(1.05);
 }
 
-.ranking-name:active {
+.ranking-game-name:active {
   cursor: grabbing;
 }
 
@@ -1552,7 +1552,7 @@ body::before {
     padding-bottom: 5px;
   }
   
-  .ranking-name {
+  .ranking-game-name {
     padding: 6px 10px;
     font-size: 0.75rem;
   }
