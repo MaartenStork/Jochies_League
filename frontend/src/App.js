@@ -56,6 +56,9 @@ function App() {
   const [selectedSquare, setSelectedSquare] = useState(null);
   const [boardState, setBoardState] = useState([]);
 
+  // Ian flashbang easter egg
+  const [showIanFlashbang, setShowIanFlashbang] = useState(false);
+
   // Check for auth token in URL on first load
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -295,8 +298,19 @@ function App() {
         setCheatMessage('👋 JOB SAYS HI!');
         break;
       case 'chess':
+      case 'schaken':
+      case 'schaak':
+      case 'chessgame':
+      case 'chess game':
         startChessGame();
         setCheatMessage('♟️ CHESS TIME!');
+        break;
+      case 'ian':
+        setShowIanFlashbang(true);
+        setCheatConsoleOpen(false);
+        setCheatMessage('💥 FLASHBANG!');
+        // Auto-hide after 5 seconds
+        setTimeout(() => setShowIanFlashbang(false), 5000);
         break;
       case 'reset':
         document.body.style.setProperty('--accent', '#00ff88');
@@ -846,6 +860,19 @@ function App() {
           {cheatMessage && <div className="cheat-message">{cheatMessage}</div>}
         </div>
       </div>
+
+      {/* Ian Flashbang Easter Egg */}
+      {showIanFlashbang && (
+        <div className="ian-flashbang-overlay" onClick={() => setShowIanFlashbang(false)}>
+          <div className="ian-flashbang-flash" />
+          <iframe 
+            src="/ianmorph/flashbang.html" 
+            title="Ian Morph"
+            className="ian-flashbang-iframe"
+          />
+          <div className="ian-flashbang-close">Click anywhere to close</div>
+        </div>
+      )}
 
       {/* Chess Game Modal */}
       {showChess && (
