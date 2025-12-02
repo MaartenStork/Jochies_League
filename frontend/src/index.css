@@ -84,7 +84,7 @@ body::before {
 
 /* Profile Menu - Top Right */
 .profile-menu {
-  position: absolute;
+  position: fixed;
   top: 1rem;
   right: 1rem;
   z-index: 100;
