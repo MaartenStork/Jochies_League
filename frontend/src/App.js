@@ -48,6 +48,8 @@ function App() {
   const [cheatConsoleOpen, setCheatConsoleOpen] = useState(false);
   const [cheatCode, setCheatCode] = useState('');
   const [cheatMessage, setCheatMessage] = useState('');
+  const [wrongAttempts, setWrongAttempts] = useState(0);
+  const [monkeyCursor, setMonkeyCursor] = useState(false);
 
   // Chess game
   const [showChess, setShowChess] = useState(false);
@@ -73,7 +75,8 @@ function App() {
   const [sfGroupActive, setSfGroupActive] = useState(false); // Block individual triggers during group
 
   // Brainrot easter egg
-  const [showBrainrot, setShowBrainrot] = useState(false);
+  const [showBrainrotLeft, setShowBrainrotLeft] = useState(false);
+  const [showBrainrotRight, setShowBrainrotRight] = useState(false);
   const [brainrotLoaded, setBrainrotLoaded] = useState({ left: false, right: false });
 
   // Rabbit clock (late check-in after 12:00)
@@ -164,6 +167,21 @@ function App() {
       }
     };
   }, [stream]);
+
+  // Monkey cursor punishment for wrong cheat codes
+  useEffect(() => {
+    if (monkeyCursor) {
+      document.body.style.cursor = 'url(/mouse/thinkingmonkey.png) 16 16, auto';
+      document.body.classList.add('monkey-cursor');
+    } else {
+      document.body.style.cursor = '';
+      document.body.classList.remove('monkey-cursor');
+    }
+    return () => {
+      document.body.style.cursor = '';
+      document.body.classList.remove('monkey-cursor');
+    };
+  }, [monkeyCursor]);
 
   // Helper function to spawn a flying Job
   const spawnFlyingJob = useCallback(() => {
@@ -350,6 +368,8 @@ function App() {
         break;
       case 'reset':
         document.body.style.setProperty('--accent', '#00ff88');
+        setMonkeyCursor(false);
+        setWrongAttempts(0);
         break;
       // Smiling Friends characters
       case 'pim':
@@ -393,7 +413,8 @@ function App() {
       case 'brainrot':
       case 'brain rot':
         setBrainrotLoaded({ left: false, right: false });
-        setShowBrainrot(true);
+        setShowBrainrotLeft(true);
+        setShowBrainrotRight(true);
         break;
       case 'smiling friends':
       case 'smilingfriends':
@@ -416,13 +437,21 @@ function App() {
         }, 5000);
         break;
       default:
-        setCheatMessage('❌ Unknown code...');
+        const newAttempts = wrongAttempts + 1;
+        setWrongAttempts(newAttempts);
+        if (newAttempts >= 3) {
+          setCheatMessage('🐵 You brought this upon yourself...');
+          setMonkeyCursor(true);
+        } else {
+          setCheatMessage(`❌ Unknown code... (${newAttempts}/3)`);
+        }
         success = false;
     }
     
     // On successful cheat code, close console (dismisses keyboard on mobile)
     if (success) {
       setCheatConsoleOpen(false);
+      setWrongAttempts(0); // Reset wrong attempts on success
       // Blur input to ensure keyboard dismisses on mobile
       if (document.activeElement) {
         document.activeElement.blur();
@@ -765,7 +794,7 @@ function App() {
         const checkInDate = new Date(data.check_in_time);
         if (checkInDate.getHours() >= 12) {
           setShowRabbitClock(true);
-          setTimeout(() => setShowRabbitClock(false), 1500);
+          setTimeout(() => setShowRabbitClock(false), 2200);
         }
       } else {
         setMessage({ type: 'error', text: data.error });
@@ -1066,36 +1095,40 @@ function App() {
       )}
 
       {/* Brainrot Easter Egg */}
-      {showBrainrot && (
+      {(showBrainrotLeft || showBrainrotRight) && (
         <div className="brainrot-overlay">
-          <div className="brainrot-container brainrot-left">
-            <button className="brainrot-close" onClick={() => setShowBrainrot(false)}>✕</button>
-            {!brainrotLoaded.left && <div className="brainrot-loader"><div className="spinner" /></div>}
-            <video
-              className={`brainrot-video ${brainrotLoaded.left ? 'loaded' : ''}`}
-              autoPlay
-              loop
-              muted
-              playsInline
-              onCanPlay={() => setBrainrotLoaded(prev => ({ ...prev, left: true }))}
-            >
-              <source src="/brainrot/brainrot1.mp4" type="video/mp4" />
-            </video>
-          </div>
-          <div className="brainrot-container brainrot-right">
-            <button className="brainrot-close" onClick={() => setShowBrainrot(false)}>✕</button>
-            {!brainrotLoaded.right && <div className="brainrot-loader"><div className="spinner" /></div>}
-            <video
-              className={`brainrot-video ${brainrotLoaded.right ? 'loaded' : ''}`}
-              autoPlay
-              loop
-              muted
-              playsInline
-              onCanPlay={() => setBrainrotLoaded(prev => ({ ...prev, right: true }))}
-            >
-              <source src="/brainrot/brainrot2.mp4" type="video/mp4" />
-            </video>
-          </div>
+          {showBrainrotLeft && (
+            <div className="brainrot-container brainrot-left">
+              <button className="brainrot-close" onClick={() => setShowBrainrotLeft(false)}>✕</button>
+              {!brainrotLoaded.left && <div className="brainrot-loader"><div className="spinner" /></div>}
+              <video
+                className={`brainrot-video ${brainrotLoaded.left ? 'loaded' : ''}`}
+                autoPlay
+                loop
+                muted
+                playsInline
+                onCanPlay={() => setBrainrotLoaded(prev => ({ ...prev, left: true }))}
+              >
+                <source src="/brainrot/brainrot1.mp4" type="video/mp4" />
+              </video>
+            </div>
+          )}
+          {showBrainrotRight && (
+            <div className="brainrot-container brainrot-right">
+              <button className="brainrot-close" onClick={() => setShowBrainrotRight(false)}>✕</button>
+              {!brainrotLoaded.right && <div className="brainrot-loader"><div className="spinner" /></div>}
+              <video
+                className={`brainrot-video ${brainrotLoaded.right ? 'loaded' : ''}`}
+                autoPlay
+                loop
+                muted
+                playsInline
+                onCanPlay={() => setBrainrotLoaded(prev => ({ ...prev, right: true }))}
+              >
+                <source src="/brainrot/brainrot2.mp4" type="video/mp4" />
+              </video>
+            </div>
+          )}
         </div>
       )}
 
