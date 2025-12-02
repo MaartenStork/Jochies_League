@@ -362,6 +362,24 @@ function App() {
         setCheatMessage('👽 GLEP!');
         setTimeout(() => setShowGlep(false), 4000);
         break;
+      case 'smiling friends':
+      case 'smilingfriends':
+      case 'smiling friend':
+      case 'smilingfriend':
+        setShowPim(true);
+        setShowCharlie(true);
+        setShowBoss(true);
+        setShowAlan(true);
+        setShowGlep(true);
+        setCheatMessage('🎉 SMILING FRIENDS!');
+        setTimeout(() => {
+          setShowPim(false);
+          setShowCharlie(false);
+          setShowBoss(false);
+          setShowAlan(false);
+          setShowGlep(false);
+        }, 5000);
+        break;
       default:
         setCheatMessage('❌ Unknown code...');
         success = false;
@@ -918,22 +936,22 @@ function App() {
       )}
       {showCharlie && (
         <div className="sf-popup sf-charlie">
-          <img src="/smilingfriends/pimnobackground.png" alt="Charlie" />
+          <img src="/smilingfriends/charlienobackground.png" alt="Charlie" />
         </div>
       )}
       {showBoss && (
         <div className="sf-popup sf-boss">
-          <img src="/smilingfriends/pimnobackground.png" alt="The Boss" />
+          <img src="/smilingfriends/bossnobackground.png" alt="The Boss" />
         </div>
       )}
       {showAlan && (
         <div className="sf-popup sf-alan">
-          <img src="/smilingfriends/pimnobackground.png" alt="Alan" />
+          <img src="/smilingfriends/alannobackground.png" alt="Alan" />
         </div>
       )}
       {showGlep && (
         <div className="sf-popup sf-glep">
-          <img src="/smilingfriends/pimnobackground.png" alt="Glep" />
+          <img src="/smilingfriends/glepnobackground.png" alt="Glep" />
         </div>
       )}
 

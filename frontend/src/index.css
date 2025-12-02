@@ -1281,8 +1281,9 @@ body::before {
   width: 120px;
   z-index: 8000;
   pointer-events: none;
+  --bounce-duration: 0.5s;
   animation: sf-pop-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
-             sf-bounce 0.5s ease-in-out 0.4s infinite alternate,
+             sf-bounce var(--bounce-duration) ease-in-out 0.4s infinite alternate,
              sf-fade-out 0.5s ease-in 3.5s forwards;
 }
 
@@ -1292,12 +1293,32 @@ body::before {
   filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
 }
 
-/* Position each character */
-.sf-pim { left: 5%; }
-.sf-charlie { left: 25%; }
-.sf-boss { left: 50%; margin-left: -60px; } /* Center with margin instead of transform */
-.sf-alan { right: 25%; }
-.sf-glep { right: 5%; }
+/* Position each character with slightly different bounce timing */
+.sf-pim { 
+  left: 5%; 
+  animation-delay: 0s, 0.4s, 3.5s;
+}
+.sf-charlie { 
+  left: 25%; 
+  animation-delay: 0.05s, 0.5s, 3.6s;
+  --bounce-duration: 0.55s;
+}
+.sf-boss { 
+  left: 50%; 
+  margin-left: -60px;
+  animation-delay: 0.1s, 0.55s, 3.7s;
+  --bounce-duration: 0.45s;
+}
+.sf-alan { 
+  right: 25%; 
+  animation-delay: 0.07s, 0.48s, 3.55s;
+  --bounce-duration: 0.52s;
+}
+.sf-glep { 
+  right: 5%; 
+  animation-delay: 0.12s, 0.6s, 3.65s;
+  --bounce-duration: 0.48s;
+}
 
 @keyframes sf-pop-up {
   0% {
