@@ -56,6 +56,9 @@ function App() {
   const [selectedSquare, setSelectedSquare] = useState(null);
   const [boardState, setBoardState] = useState([]);
 
+  // Profile dropdown
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
   // Ian flashbang easter egg
   const [showIanFlashbang, setShowIanFlashbang] = useState(false);
   const [ianFadingOut, setIanFadingOut] = useState(false);
@@ -714,20 +717,37 @@ function App() {
       <header className="header">
         <h1 className="logo">Jo<span ref={dropZoneRef} className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`} onDragOver={handleDropZoneDragOver} onDrop={handleDropZoneDrop}>{bPlaced && 'b'}</span>chies League</h1>
         <p className="tagline">Race to Science Park! 🏃‍♂️</p>
+        
+        {/* Profile icon - top right */}
+        {user && (
+          <div className="profile-menu">
+            <img 
+              src={user.picture} 
+              alt={user.name} 
+              className="profile-icon"
+              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+            />
+            {profileDropdownOpen && (
+              <>
+                <div className="profile-backdrop" onClick={() => setProfileDropdownOpen(false)} />
+                <div className="profile-dropdown">
+                  <div className="profile-dropdown-header">
+                    <div className="profile-dropdown-name">{user.name}</div>
+                    <div className="profile-dropdown-email">{user.email}</div>
+                  </div>
+                  <div className="profile-dropdown-divider" />
+                  <button className="profile-dropdown-logout" onClick={handleLogout}>
+                    Logout
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </header>
 
       {user ? (
         <>
-          <div className="user-card">
-            <img src={user.picture} alt={user.name} className="user-avatar" />
-            <div className="user-info">
-              <div className="user-name">{user.name}</div>
-              <div className="user-email">{user.email}</div>
-            </div>
-            <button className="logout-btn" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
 
           {!checkedIn && (
             <div className="checkin-section">

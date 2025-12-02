@@ -62,6 +62,7 @@ body::before {
 .header {
   text-align: center;
   margin-bottom: 2rem;
+  position: relative;
 }
 
 .logo {
@@ -81,54 +82,99 @@ body::before {
   margin-top: 0.5rem;
 }
 
-/* User Card */
-.user-card {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: var(--bg-card);
-  padding: 1rem 1.5rem;
-  border-radius: 1rem;
-  margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  width: 100%;
-  max-width: 500px;
+/* Profile Menu - Top Right */
+.profile-menu {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 100;
 }
 
-.user-avatar {
-  width: 48px;
-  height: 48px;
+.profile-icon {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: 2px solid var(--accent);
-}
-
-.user-info {
-  flex: 1;
-}
-
-.user-name {
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.user-email {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-.logout-btn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
   cursor: pointer;
-  font-family: inherit;
   transition: all 0.2s;
+  object-fit: cover;
 }
 
-.logout-btn:hover {
-  border-color: var(--danger);
+.profile-icon:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.profile-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  min-width: 200px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  animation: dropdownIn 0.15s ease-out;
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-dropdown-header {
+  padding: 12px 16px;
+}
+
+.profile-dropdown-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.profile-dropdown-email {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.profile-dropdown-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profile-dropdown-logout {
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 0 0 12px 12px;
+}
+
+.profile-dropdown-logout:hover {
+  background: rgba(255, 77, 77, 0.1);
   color: var(--danger);
 }
 
@@ -632,14 +678,6 @@ body::before {
   
   .checkin-icon {
     font-size: 2.5rem;
-  }
-
-  .user-card {
-    padding: 0.75rem 1rem;
-  }
-
-  .user-name {
-    font-size: 1rem;
   }
 
   .ranking-section,
