@@ -1,4 +1,4 @@
-// Flashbang version - auto-loads images and morphs continuously
+// Flashbang version - auto-loads images and morphs ONCE
 let img1, img2
 let tex1, tex2
 let texGraphic
@@ -9,6 +9,9 @@ const nodesPerSide = 10
 let nodes1, nodes2
 
 const sideLength = 800
+let startTime = null
+const animationDuration = 2000 // 2 seconds for the morph
+let animationComplete = false
 
 function preload() {
   // Load nodes data
@@ -77,12 +80,26 @@ function windowResized() {
 }
 
 function draw() {
-  background(255)
+  background(0) // Black background in case any edges show
+  
+  // Start timer once textures are loaded
+  if (tex1 && tex2 && startTime === null) {
+    startTime = millis()
+  }
+  
+  // Calculate progress (0 to 1, clamped)
+  let t = 0
+  if (startTime !== null) {
+    t = min((millis() - startTime) / animationDuration, 1)
+    if (t >= 1) {
+      animationComplete = true
+    }
+  }
   
   fbo2.draw(() => {
     clear()
-    // Continuous morphing animation - full cycle every 2 seconds
-    drawMorph((millis() * 0.0005) % 1)
+    // Play morph animation ONCE
+    drawMorph(t)
   })
   
   push()
@@ -97,8 +114,8 @@ function drawMorph(t) {
     push()
     textureMode(NORMAL)
     
-    // Scale to fill screen
-    const morphScale = min(width, height) / sideLength * 1.5
+    // Scale to FILL entire screen (no white borders)
+    const morphScale = max(width, height) / sideLength * 1.8
     
     const data = [{ img: tex1, id: 0, nodes: nodes1 }, { img: tex2, id: 1, nodes: nodes2 }]
     for (const frame of data) {

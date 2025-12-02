@@ -309,8 +309,8 @@ function App() {
         setShowIanFlashbang(true);
         setCheatConsoleOpen(false);
         setCheatMessage('💥 FLASHBANG!');
-        // Auto-hide after 5 seconds
-        setTimeout(() => setShowIanFlashbang(false), 5000);
+        // Auto-hide after animation completes (2.5s)
+        setTimeout(() => setShowIanFlashbang(false), 2500);
         break;
       case 'reset':
         document.body.style.setProperty('--accent', '#00ff88');
@@ -863,14 +863,13 @@ function App() {
 
       {/* Ian Flashbang Easter Egg */}
       {showIanFlashbang && (
-        <div className="ian-flashbang-overlay" onClick={() => setShowIanFlashbang(false)}>
+        <div className="ian-flashbang-overlay">
           <div className="ian-flashbang-flash" />
           <iframe 
             src="/ianmorph/flashbang.html" 
             title="Ian Morph"
             className="ian-flashbang-iframe"
           />
-          <div className="ian-flashbang-close">Click anywhere to close</div>
         </div>
       )}
 
