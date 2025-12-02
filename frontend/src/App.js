@@ -431,6 +431,11 @@ function App() {
         setShowBrainrotLeft(true);
         setShowBrainrotRight(true);
         break;
+      case 'rabbit':
+      case 'konijn':
+        setShowRabbitClock(true);
+        setTimeout(() => setShowRabbitClock(false), 2200);
+        break;
       case 'smiling friends':
       case 'smilingfriends':
       case 'smiling friend':
@@ -455,7 +460,7 @@ function App() {
         const newAttempts = wrongAttempts + 1;
         setWrongAttempts(newAttempts);
         if (newAttempts >= 3) {
-          setCheatMessage('🐵 You brought this upon yourself...');
+          setCheatMessage('ewa fout gedaan, aap tijd');
           setMonkeyCursor(true);
         } else {
           setCheatMessage(`❌ Unknown code... (${newAttempts}/3)`);
