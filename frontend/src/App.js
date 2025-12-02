@@ -58,6 +58,7 @@ function App() {
 
   // Ian flashbang easter egg
   const [showIanFlashbang, setShowIanFlashbang] = useState(false);
+  const [ianFadingOut, setIanFadingOut] = useState(false);
 
   // Check for auth token in URL on first load
   useEffect(() => {
@@ -307,10 +308,15 @@ function App() {
         break;
       case 'ian':
         setShowIanFlashbang(true);
+        setIanFadingOut(false);
         setCheatConsoleOpen(false);
         setCheatMessage('💥 FLASHBANG!');
-        // Auto-hide after animation completes (2.5s)
-        setTimeout(() => setShowIanFlashbang(false), 2500);
+        // Start fade-out after morph completes (2s), then remove after fade (1s)
+        setTimeout(() => setIanFadingOut(true), 2000);
+        setTimeout(() => {
+          setShowIanFlashbang(false);
+          setIanFadingOut(false);
+        }, 3000);
         break;
       case 'reset':
         document.body.style.setProperty('--accent', '#00ff88');
@@ -863,7 +869,7 @@ function App() {
 
       {/* Ian Flashbang Easter Egg */}
       {showIanFlashbang && (
-        <div className="ian-flashbang-overlay">
+        <div className={`ian-flashbang-overlay ${ianFadingOut ? 'fading-out' : ''}`}>
           <div className="ian-flashbang-flash" />
           <iframe 
             src="/ianmorph/flashbang.html" 

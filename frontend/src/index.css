@@ -1139,5 +1139,30 @@ body::before {
   height: 100%;
   border: none;
   z-index: 1;
-  opacity: 0.75;
+  animation: ian-opacity-ramp 2s ease-in forwards;
+}
+
+@keyframes ian-opacity-ramp {
+  0% {
+    opacity: 0.3;
+  }
+  80% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.ian-flashbang-overlay.fading-out .ian-flashbang-iframe {
+  animation: ian-fade-out 1s ease-out forwards;
+}
+
+@keyframes ian-fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
