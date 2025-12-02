@@ -71,6 +71,7 @@ function App() {
   const [showAlan, setShowAlan] = useState(false);
   const [showGlep, setShowGlep] = useState(false);
   const [sfStaggered, setSfStaggered] = useState(false); // Stagger only for group spawn
+  const [sfGroupActive, setSfGroupActive] = useState(false); // Block individual triggers during group
 
   // Check for auth token in URL on first load
   useEffect(() => {
@@ -340,11 +341,13 @@ function App() {
         break;
       // Smiling Friends characters
       case 'pim':
+        if (sfGroupActive) break; // Don't interrupt group animation
         setSfStaggered(false);
         setShowPim(true);
         setTimeout(() => setShowPim(false), 4000);
         break;
       case 'charlie':
+        if (sfGroupActive) break;
         setSfStaggered(false);
         setShowCharlie(true);
         setTimeout(() => setShowCharlie(false), 4000);
@@ -352,16 +355,19 @@ function App() {
       case 'boss':
       case 'the boss':
       case 'theboss':
+        if (sfGroupActive) break;
         setSfStaggered(false);
         setShowBoss(true);
         setTimeout(() => setShowBoss(false), 4000);
         break;
       case 'alan':
+        if (sfGroupActive) break;
         setSfStaggered(false);
         setShowAlan(true);
         setTimeout(() => setShowAlan(false), 4000);
         break;
       case 'glep':
+        if (sfGroupActive) break;
         setSfStaggered(false);
         setShowGlep(true);
         setTimeout(() => setShowGlep(false), 4000);
@@ -370,6 +376,7 @@ function App() {
       case 'smilingfriends':
       case 'smiling friend':
       case 'smilingfriend':
+        setSfGroupActive(true);
         setSfStaggered(true);
         setShowPim(true);
         setShowCharlie(true);
@@ -382,6 +389,7 @@ function App() {
           setShowBoss(false);
           setShowAlan(false);
           setShowGlep(false);
+          setSfGroupActive(false);
         }, 5000);
         break;
       default:
