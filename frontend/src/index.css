@@ -61,29 +61,44 @@ body::before {
 
 /* 67 tilt easter egg */
 .app.tilt-67 {
-  animation: tilt67 2s ease-in-out;
+  animation: tilt67 2s cubic-bezier(0.45, 0.05, 0.55, 0.95);
 }
 
 @keyframes tilt67 {
   0% {
     transform: rotate(0deg);
   }
-  15% {
-    transform: rotate(-15deg);
+  10% {
+    transform: rotate(-8deg);
   }
-  30% {
+  20% {
+    transform: rotate(-18deg);
+  }
+  25% {
     transform: rotate(-25deg);
+  }
+  35% {
+    transform: rotate(-15deg);
   }
   45% {
     transform: rotate(0deg);
   }
+  50% {
+    transform: rotate(0deg);
+  }
   60% {
-    transform: rotate(25deg);
+    transform: rotate(8deg);
+  }
+  70% {
+    transform: rotate(18deg);
   }
   75% {
+    transform: rotate(25deg);
+  }
+  85% {
     transform: rotate(15deg);
   }
-  90% {
+  95% {
     transform: rotate(0deg);
   }
   100% {

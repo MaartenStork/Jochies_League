@@ -1242,7 +1242,6 @@ function App() {
                 className={`brainrot-video ${brainrotLoaded.left ? 'loaded' : ''}`}
                 autoPlay
                 loop
-                muted
                 playsInline
                 onCanPlay={() => setBrainrotLoaded(prev => ({ ...prev, left: true }))}
               >
@@ -1258,7 +1257,6 @@ function App() {
                 className={`brainrot-video ${brainrotLoaded.right ? 'loaded' : ''}`}
                 autoPlay
                 loop
-                muted
                 playsInline
                 onCanPlay={() => setBrainrotLoaded(prev => ({ ...prev, right: true }))}
               >
