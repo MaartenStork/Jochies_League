@@ -96,6 +96,10 @@ function App() {
 
   // Secret tracking
   const [secretProgress, setSecretProgress] = useState(null);
+  const [showSecretCounter, setShowSecretCounter] = useState(() => {
+    return localStorage.getItem('show_secret_counter') === 'true';
+  });
+  const [secretDropdownOpen, setSecretDropdownOpen] = useState(false);
 
   // Ranking game easter egg
   const [showRanking, setShowRanking] = useState(false);
@@ -567,15 +571,12 @@ function App() {
       case 'counter':
       case 'progress':
       case 'secrets':
+        // Enable persistent counter display
+        setShowSecretCounter(true);
+        localStorage.setItem('show_secret_counter', 'true');
+        discoverSecret('counter'); // The counter itself is a secret!
         fetchSecretProgress();
-        if (secretProgress) {
-          setCheatMessage(`🎯 Secrets found: ${secretProgress.total_found}/${secretProgress.total_secrets} (${secretProgress.percentage}%)`);
-        } else {
-          setCheatMessage('Loading progress...');
-          setTimeout(() => {
-            fetchSecretProgress();
-          }, 500);
-        }
+        setCheatMessage('🎯 Secret counter enabled!');
         success = true; // Don't count as wrong attempt
         break;
       default:
@@ -1087,6 +1088,39 @@ function App() {
                   </button>
                 </div>
               </>
+            )}
+            
+            {/* Secret Counter Widget */}
+            {showSecretCounter && secretProgress && (
+              <div className="secret-counter-widget">
+                <div 
+                  className="secret-counter-badge"
+                  onClick={() => setSecretDropdownOpen(!secretDropdownOpen)}
+                >
+                  <span className="secret-counter-icon">🎯</span>
+                  <span className="secret-counter-text">
+                    {secretProgress.percentage}%
+                  </span>
+                </div>
+                
+                {secretDropdownOpen && (
+                  <>
+                    <div className="secret-dropdown-backdrop" onClick={() => setSecretDropdownOpen(false)} />
+                    <div className="secret-dropdown">
+                      <div className="secret-dropdown-header">
+                        Secrets Found ({secretProgress.total_found}/{secretProgress.total_secrets})
+                      </div>
+                      <div className="secret-list">
+                        {secretProgress.found_secrets.map(secret => (
+                          <div key={secret} className="secret-item">
+                            ✓ {secret.replace(/_/g, ' ')}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             )}
           </div>
         )}

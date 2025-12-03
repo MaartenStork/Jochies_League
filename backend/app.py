@@ -488,7 +488,8 @@ ALL_SECRETS = [
     'ranking',         # Ranking game
     'brainrot',        # Brainrot videos
     'fnaf',            # FNAF jumpscare
-    'six_seven'        # 67 tilt
+    'six_seven',       # 67 tilt
+    'counter'          # Finding the secret counter
 ]
 
 @app.route('/api/secret/discover', methods=['POST'])
