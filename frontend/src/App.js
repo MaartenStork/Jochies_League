@@ -133,6 +133,46 @@ function App() {
     }
   }, []);
 
+  // Track secret discovery
+  const discoverSecret = useCallback(async (secretCode) => {
+    if (!user) return;
+    
+    try {
+      const res = await fetch(`${API_URL}/api/secret/discover`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        credentials: 'include',
+        body: JSON.stringify({ secret_code: secretCode })
+      });
+      
+      const data = await res.json();
+      if (res.ok && !data.already_found) {
+        console.log(`🎉 New secret discovered: ${secretCode}! (${data.percentage}%)`);
+      }
+    } catch (err) {
+      console.error('Error recording secret:', err);
+    }
+  }, [user]);
+
+  // Fetch secret progress
+  const fetchSecretProgress = useCallback(async () => {
+    if (!user) return;
+    
+    try {
+      const res = await fetch(`${API_URL}/api/secret/progress`, {
+        headers: getAuthHeaders(),
+        credentials: 'include'
+      });
+      
+      const data = await res.json();
+      if (res.ok) {
+        setSecretProgress(data);
+      }
+    } catch (err) {
+      console.error('Error fetching secret progress:', err);
+    }
+  }, [user]);
+
   // Fetch check-in status
   const fetchStatus = useCallback(async () => {
     if (!user) return;
@@ -970,45 +1010,6 @@ function App() {
     }
   };
 
-  // Track secret discovery
-  const discoverSecret = async (secretCode) => {
-    if (!user) return;
-    
-    try {
-      const res = await fetch(`${API_URL}/api/secret/discover`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        credentials: 'include',
-        body: JSON.stringify({ secret_code: secretCode })
-      });
-      
-      const data = await res.json();
-      if (res.ok && !data.already_found) {
-        console.log(`🎉 New secret discovered: ${secretCode}! (${data.percentage}%)`);
-      }
-    } catch (err) {
-      console.error('Error recording secret:', err);
-    }
-  };
-
-  // Fetch secret progress
-  const fetchSecretProgress = useCallback(async () => {
-    if (!user) return;
-    
-    try {
-      const res = await fetch(`${API_URL}/api/secret/progress`, {
-        headers: getAuthHeaders(),
-        credentials: 'include'
-      });
-      
-      const data = await res.json();
-      if (res.ok) {
-        setSecretProgress(data);
-      }
-    } catch (err) {
-      console.error('Error fetching secret progress:', err);
-    }
-  }, [user]);
 
   if (loading) {
     return (
