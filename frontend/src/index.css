@@ -160,6 +160,118 @@ body.theme-chess::after {
   }
 }
 
+/* ============ HOLLOW KNIGHT GAME ============ */
+.hollow-knight-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.hollow-knight-modal {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  width: 1000px;
+}
+
+.hollow-knight-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.hollow-knight-header h2 {
+  font-size: 1.3rem;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff, #aaaaaa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hollow-knight-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.2s;
+}
+
+.hollow-knight-close:hover {
+  color: var(--danger);
+}
+
+.hollow-knight-game {
+  flex: 1;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 600px;
+}
+
+.hollow-knight-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  min-height: 600px;
+}
+
+.hollow-knight-hint {
+  text-align: center;
+  margin-top: 12px;
+  margin-bottom: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+@media (max-width: 1024px) {
+  .hollow-knight-modal {
+    width: 90vw;
+  }
+  
+  .hollow-knight-game,
+  .hollow-knight-iframe {
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hollow-knight-modal {
+    width: 95vw;
+    padding: 15px;
+  }
+  
+  .hollow-knight-game,
+  .hollow-knight-iframe {
+    min-height: 400px;
+  }
+  
+  .hollow-knight-hint {
+    font-size: 0.75rem;
+  }
+}
+
 /* Animated background - default theme */
 body:not(.theme-kabouter):not(.theme-chess)::before {
   content: '';

@@ -115,6 +115,9 @@ function App() {
   const correctRanking = {1: 'Ian', 2: 'Tobias', 3: 'Derk', 4: 'Guru', 5: 'Job', 6: 'Niels'};
   const rankingNames = ['Derk', 'Maarten', 'Tobias', 'Maas', 'Job', 'Daan', 'Guru', 'Niels', 'Simo', 'Julian', 'Manka', 'Tibi', 'Ian'];
 
+  // Hollow Knight game easter egg
+  const [showHollowKnight, setShowHollowKnight] = useState(false);
+
   // Theme system
   const [currentTheme, setCurrentTheme] = useState('default');
   const [unlockedThemes, setUnlockedThemes] = useState(['default']);
@@ -675,6 +678,14 @@ function App() {
         setRankingComplete(false);
         setRankingChecked(false);
         discoverSecret('ranking');
+        break;
+      case 'hollow knight':
+      case 'hollowknight':
+      case 'hollow':
+      case 'silksong':
+      case 'silk song':
+        setShowHollowKnight(true);
+        discoverSecret('hollow_knight');
         break;
       case 'brainrot':
       case 'brain rot':
@@ -2058,6 +2069,27 @@ function App() {
               ))}
             </div>
             <button className="chess-reset" onClick={resetChessGame}>New Game</button>
+          </div>
+        </div>
+      )}
+
+      {/* Hollow Knight Game Modal */}
+      {showHollowKnight && (
+        <div className="hollow-knight-overlay" onClick={() => setShowHollowKnight(false)}>
+          <div className="hollow-knight-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="hollow-knight-header">
+              <h2>⚔️ Hollow Knight</h2>
+              <button className="hollow-knight-close" onClick={() => setShowHollowKnight(false)}>✕</button>
+            </div>
+            <div className="hollow-knight-game">
+              <iframe
+                src="https://tintinwinata.github.io/hollow-knight-js/"
+                title="Hollow Knight Game"
+                className="hollow-knight-iframe"
+                allow="autoplay; fullscreen"
+              />
+            </div>
+            <p className="hollow-knight-hint">Press F for fullscreen • Use arrow keys to move • Space to jump • X to attack</p>
           </div>
         </div>
       )}
