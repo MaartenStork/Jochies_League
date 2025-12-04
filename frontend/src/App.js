@@ -2083,7 +2083,7 @@ function App() {
             </div>
             <div className="hollow-knight-game">
               <iframe
-                src="https://tintinwinata.github.io/hollow-knight-js/"
+                src="/hollowknight/game.html"
                 title="Hollow Knight Game"
                 className="hollow-knight-iframe"
                 allow="autoplay; fullscreen"
