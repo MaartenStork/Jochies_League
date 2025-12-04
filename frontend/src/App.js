@@ -1420,7 +1420,7 @@ function App() {
 
   return (
     <div className={`app ${show67Tilt ? 'tilt-67' : ''}`}>
-      <header className="header">
+      <header className={`header ${!user ? 'login-header' : ''}`}>
         <h1 className="logo">Jo<span ref={dropZoneRef} className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`} onDragOver={handleDropZoneDragOver} onDrop={handleDropZoneDrop}>{bPlaced && 'b'}</span>{bPlaced ? ' chies' : 'chies'} League</h1>
         <p className="tagline">SP grind time</p>
         
@@ -1544,7 +1544,6 @@ function App() {
         <div className="login-screen">
           <div className="login-content">
             <img src="/soyjack.png" alt="Soyjack" className="login-image" />
-            <p className="login-tagline">Join the Science Park grind</p>
             <button className="login-btn" onClick={handleLogin}>
               <svg viewBox="0 0 24 24">
                 <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

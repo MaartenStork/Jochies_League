@@ -253,6 +253,10 @@ body:not(.theme-kabouter):not(.theme-chess)::before {
   position: relative;
 }
 
+.header.login-header {
+  margin-bottom: 3rem;
+}
+
 .logo {
   font-size: 3rem;
   font-weight: 800;
@@ -590,6 +594,17 @@ body:not(.theme-kabouter):not(.theme-chess)::before {
   font-size: 1.1rem;
 }
 
+/* Mobile: Secret dropdown goes down and to the left */
+@media (max-width: 768px) {
+  .secret-dropdown {
+    top: calc(100% + 0.5rem);
+    right: auto;
+    left: 0;
+    min-width: 200px;
+    max-width: 250px;
+  }
+}
+
 /* Main Check-in Button */
 .checkin-section {
   display: flex;
@@ -702,16 +717,16 @@ body:not(.theme-kabouter):not(.theme-chess)::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 200px);
-  padding: 2rem;
+  justify-content: flex-start;
+  min-height: calc(100vh - 300px);
+  padding: 0 2rem 2rem 2rem;
 }
 
 .login-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 2.5rem;
   max-width: 500px;
   text-align: center;
 }
@@ -732,13 +747,6 @@ body:not(.theme-kabouter):not(.theme-chess)::before {
   50% {
     transform: translateY(-10px);
   }
-}
-
-.login-tagline {
-  font-size: 1.3rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  margin: -1rem 0;
 }
 
 .login-btn {
@@ -774,10 +782,6 @@ body:not(.theme-kabouter):not(.theme-chess)::before {
 @media (max-width: 480px) {
   .login-image {
     width: 250px;
-  }
-  
-  .login-tagline {
-    font-size: 1.1rem;
   }
 }
 
