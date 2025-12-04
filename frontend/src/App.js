@@ -94,6 +94,9 @@ function App() {
   // 67 tilt easter egg
   const [show67Tilt, setShow67Tilt] = useState(false);
 
+  // Hollow Knight game popup
+  const [showHollowKnight, setShowHollowKnight] = useState(false);
+
   // Secret tracking
   const [secretProgress, setSecretProgress] = useState(null);
   const [secretDropdownOpen, setSecretDropdownOpen] = useState(false);
@@ -701,6 +704,13 @@ function App() {
         setShow67Tilt(true);
         discoverSecret('six_seven');
         setTimeout(() => setShow67Tilt(false), 2000);
+        break;
+      case 'hollow knight':
+      case 'hollowknight':
+      case 'silksong':
+      case 'silk song':
+        setShowHollowKnight(true);
+        discoverSecret('hollow_knight');
         break;
       case 'smiling friends':
       case 'smilingfriends':
@@ -1957,6 +1967,24 @@ function App() {
           >
             <source src="/FOX.webm" type="video/webm" />
           </video>
+        </div>
+      )}
+
+      {/* Hollow Knight Game Popup */}
+      {showHollowKnight && (
+        <div className="hollow-knight-overlay" onClick={() => setShowHollowKnight(false)}>
+          <div className="hollow-knight-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="hollow-knight-header">
+              <h2>♟️ Hollow Knight</h2>
+              <button className="hollow-knight-close" onClick={() => setShowHollowKnight(false)}>✕</button>
+            </div>
+            <iframe
+              src="/hollowknight/game.html"
+              title="Hollow Knight Game"
+              className="hollow-knight-iframe"
+              allow="autoplay; fullscreen"
+            />
+          </div>
         </div>
       )}
 
