@@ -484,6 +484,7 @@ ALL_SECRETS = [
     'job_spawn',       # Typing "job" to spawn flying Job
     'job_click',       # Clicking flying Job
     'chess',           # Playing chess
+    'chess_victory',   # Beating the chess AI (unlocks Chess Jobje theme)
     'ian',             # Ian flashbang
     'smiling_friends', # Any smiling friends character
     'ranking',         # Ranking game
@@ -491,7 +492,9 @@ ALL_SECRETS = [
     'fnaf',            # FNAF jumpscare
     'six_seven',       # 67 tilt
     'monkey_cursor',   # Triggered monkey cursor punishment
-    'counter'          # Finding the secret counter
+    'counter',         # Finding the secret counter
+    'theme_kabouter',  # Unlocking Kabouter theme
+    'bar_explosion'    # Shaking the progress bar until it explodes
 ]
 
 @app.route('/api/secret/discover', methods=['POST'])
