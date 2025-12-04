@@ -94,8 +94,74 @@ body.theme-kabouter::after {
   }
 }
 
+/* Chess Master theme background */
+body.theme-chess::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-conic-gradient(
+      from 0deg at 50% 50%,
+      rgba(212, 175, 55, 0.03) 0deg 90deg,
+      transparent 90deg 180deg
+    ),
+    repeating-conic-gradient(
+      from 45deg at 50% 50%,
+      rgba(212, 175, 55, 0.02) 0deg 90deg,
+      transparent 90deg 180deg
+    );
+  background-size: 120px 120px, 80px 80px;
+  background-position: 0 0, 40px 40px;
+  opacity: 0;
+  z-index: -2;
+  animation: chessFadeIn 2s ease-out forwards;
+}
+
+@keyframes chessFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Golden gradient overlay for chess theme */
+body.theme-chess::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(212, 175, 55, 0.10) 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 80%, rgba(184, 148, 31, 0.08) 0%, transparent 40%),
+    linear-gradient(
+      to bottom,
+      rgba(10, 10, 15, 0.80) 0%,
+      rgba(10, 10, 15, 0.70) 50%,
+      rgba(10, 10, 15, 0.80) 100%
+    );
+  z-index: -1;
+  pointer-events: none;
+  animation: chessGlowPulse 6s ease-in-out infinite;
+}
+
+@keyframes chessGlowPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.90;
+  }
+}
+
 /* Animated background - default theme */
-body:not(.theme-kabouter)::before {
+body:not(.theme-kabouter):not(.theme-chess)::before {
   content: '';
   position: fixed;
   top: 0;

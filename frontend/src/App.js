@@ -136,6 +136,15 @@ function App() {
         accentGlow: 'rgba(255, 68, 68, 0.3)'
       },
       background: '/kabouterbackground.png'
+    },
+    chess: {
+      name: 'Chess Master',
+      colors: {
+        accent: '#d4af37',
+        accentDim: '#b8941f',
+        accentGlow: 'rgba(212, 175, 55, 0.3)'
+      },
+      background: null
     }
   };
 
@@ -177,12 +186,19 @@ function App() {
       document.documentElement.style.setProperty('--accent-dim', theme.colors.accentDim);
       document.documentElement.style.setProperty('--accent-glow', theme.colors.accentGlow);
       
-      // Set theme background
+      // Set theme background and body class
       if (theme.background) {
         document.documentElement.style.setProperty('--theme-background', `url(${process.env.PUBLIC_URL}${theme.background})`);
-        document.body.className = 'theme-kabouter';
       } else {
         document.documentElement.style.setProperty('--theme-background', 'none');
+      }
+      
+      // Set appropriate body class for each theme
+      if (currentTheme === 'kabouter') {
+        document.body.className = 'theme-kabouter';
+      } else if (currentTheme === 'chess') {
+        document.body.className = 'theme-chess';
+      } else {
         document.body.className = '';
       }
     }
@@ -833,8 +849,16 @@ function App() {
           // Check if player won
           if (chess.isCheckmate()) {
             setTimeout(() => {
-              confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
-              alert('♔ You win! Checkmate!');
+              // Unlock chess theme!
+              const unlocked = unlockTheme('chess');
+              confetti({ 
+                particleCount: 200, 
+                spread: 100, 
+                origin: { y: 0.5 },
+                colors: unlocked ? ['#d4af37', '#b8941f', '#ffd700'] : ['#00ff88', '#ffd700', '#ff4466']
+              });
+              discoverSecret('chess_victory');
+              alert('♔ You win! Checkmate! Chess Master theme unlocked! 🏆');
             }, 100);
             return;
           } else if (chess.isDraw()) {
