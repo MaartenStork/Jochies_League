@@ -255,17 +255,24 @@ body::before {
   border: 2px solid var(--accent);
   border-radius: 12px;
   cursor: grab;
-  transition: all 0.2s;
+  transition: background 0.2s, box-shadow 0.2s;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
 }
 
-.secret-counter-main:hover {
+.secret-counter-main:hover:not(.dragging) {
   background: var(--bg-secondary);
   transform: scale(1.02);
   box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.secret-counter-main.dragging {
+  transition: none;
+  cursor: grabbing;
+  box-shadow: 0 8px 32px rgba(0, 255, 136, 0.4);
+  transform: scale(1.1);
 }
 
 .secret-counter-main.shaking {

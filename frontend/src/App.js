@@ -101,8 +101,10 @@ function App() {
   // Progress bar shake easter egg
   const [isShakingBar, setIsShakingBar] = useState(false);
   const [barExploded, setBarExploded] = useState(false);
+  const [barPosition, setBarPosition] = useState(null); // { x, y } when dragging
   const shakeDataRef = useRef({ startX: 0, startY: 0, movements: [], isGrabbing: false });
   const barShakeTimerRef = useRef(null);
+  const barRef = useRef(null);
 
   // Ranking game easter egg
   const [showRanking, setShowRanking] = useState(false);
@@ -804,20 +806,35 @@ function App() {
 
   // Progress bar shake handlers
   const handleBarGrab = (e) => {
-    if (barExploded) return;
+    if (barExploded || !barRef.current) return;
+    
+    e.preventDefault();
     
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    // Get the bar's current position
+    const rect = barRef.current.getBoundingClientRect();
+    const offsetX = clientX - rect.left;
+    const offsetY = clientY - rect.top;
     
     shakeDataRef.current = {
       startX: clientX,
       startY: clientY,
       lastX: clientX,
       lastY: clientY,
+      offsetX,
+      offsetY,
       movements: [],
       isGrabbing: true,
       lastTime: Date.now()
     };
+    
+    // Start dragging - position the bar at cursor
+    setBarPosition({
+      x: clientX - offsetX,
+      y: clientY - offsetY
+    });
     
     setIsShakingBar(false);
   };
@@ -830,6 +847,12 @@ function App() {
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     const now = Date.now();
+    
+    // Move the bar to follow cursor
+    setBarPosition({
+      x: clientX - shakeDataRef.current.offsetX,
+      y: clientY - shakeDataRef.current.offsetY
+    });
     
     const deltaX = clientX - shakeDataRef.current.lastX;
     const deltaY = clientY - shakeDataRef.current.lastY;
@@ -865,12 +888,13 @@ function App() {
   const handleBarRelease = () => {
     shakeDataRef.current.isGrabbing = false;
     
-    // Reset shake visual after a delay
+    // Reset position and shake visual after a delay
     if (barShakeTimerRef.current) {
       clearTimeout(barShakeTimerRef.current);
     }
     barShakeTimerRef.current = setTimeout(() => {
       setIsShakingBar(false);
+      setBarPosition(null); // Return to original position
     }, 200);
   };
 
@@ -880,6 +904,11 @@ function App() {
     setBarExploded(true);
     setIsShakingBar(false);
     shakeDataRef.current.isGrabbing = false;
+    
+    // Get position for confetti origin
+    const explosionOrigin = barPosition 
+      ? { x: barPosition.x / window.innerWidth, y: barPosition.y / window.innerHeight }
+      : { x: 0.5, y: 0.1 };
     
     // Massive confetti explosion!
     const duration = 3000;
@@ -893,18 +922,21 @@ function App() {
       if (timeLeft <= 0) {
         clearInterval(interval);
         // Reset after explosion
-        setTimeout(() => setBarExploded(false), 1000);
+        setTimeout(() => {
+          setBarExploded(false);
+          setBarPosition(null);
+        }, 1000);
         return;
       }
       
       const particleCount = 50;
       
-      // Fire from multiple points
+      // Fire from the explosion point
       confetti({
         particleCount,
         startVelocity: 30,
         spread: 360,
-        origin: { x: randomInRange(0.1, 0.9), y: randomInRange(0, 0.3) },
+        origin: explosionOrigin,
         colors: ['#00ff88', '#ffd700', '#ff4466', '#00ddaa', '#ff6b35', '#4ecdc4']
       });
     }, 100);
@@ -1232,11 +1264,20 @@ function App() {
             {secretProgress && secretProgress.found_secrets.includes('counter') && (
               <div className="secret-counter-widget">
                 <div 
-                  className={`secret-counter-main ${isShakingBar ? 'shaking' : ''} ${barExploded ? 'exploded' : ''}`}
-                  onClick={() => !isShakingBar && setSecretDropdownOpen(!secretDropdownOpen)}
+                  ref={barRef}
+                  className={`secret-counter-main ${isShakingBar ? 'shaking' : ''} ${barExploded ? 'exploded' : ''} ${barPosition ? 'dragging' : ''}`}
+                  onClick={() => !isShakingBar && !barPosition && setSecretDropdownOpen(!secretDropdownOpen)}
                   onMouseDown={handleBarGrab}
                   onTouchStart={handleBarGrab}
-                  style={{ cursor: barExploded ? 'not-allowed' : (shakeDataRef.current.isGrabbing ? 'grabbing' : 'grab') }}
+                  style={{ 
+                    cursor: barExploded ? 'not-allowed' : (shakeDataRef.current.isGrabbing ? 'grabbing' : 'grab'),
+                    ...(barPosition ? {
+                      position: 'fixed',
+                      left: `${barPosition.x}px`,
+                      top: `${barPosition.y}px`,
+                      zIndex: 10000
+                    } : {})
+                  }}
                 >
                   <div className="secret-progress-bar">
                     <div 
