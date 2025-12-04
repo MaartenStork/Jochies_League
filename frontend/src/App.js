@@ -805,6 +805,53 @@ function App() {
   };
 
   // Progress bar shake handlers
+  const triggerBarExplosion = useCallback(() => {
+    if (barExploded) return;
+    
+    setBarExploded(true);
+    setIsShakingBar(false);
+    shakeDataRef.current.isGrabbing = false;
+    
+    // Get position for confetti origin
+    const explosionOrigin = barPosition 
+      ? { x: barPosition.x / window.innerWidth, y: barPosition.y / window.innerHeight }
+      : { x: 0.5, y: 0.1 };
+    
+    // Massive confetti explosion!
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    
+    const randomInRange = (min, max) => Math.random() * (max - min) + min;
+    
+    const interval = setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+      
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        // Reset after explosion
+        setTimeout(() => {
+          setBarExploded(false);
+          setBarPosition(null);
+        }, 1000);
+        return;
+      }
+      
+      const particleCount = 50;
+      
+      // Fire from the explosion point
+      confetti({
+        particleCount,
+        startVelocity: 30,
+        spread: 360,
+        origin: explosionOrigin,
+        colors: ['#00ff88', '#ffd700', '#ff4466', '#00ddaa', '#ff6b35', '#4ecdc4']
+      });
+    }, 100);
+    
+    // Track secret discovery
+    discoverSecret('bar_explosion');
+  }, [barExploded, barPosition, discoverSecret]);
+
   const handleBarGrab = useCallback((e) => {
     if (barExploded || !barRef.current) return;
     
@@ -899,53 +946,6 @@ function App() {
       setBarPosition(null); // Return to original position
     }, 200);
   }, []);
-
-  const triggerBarExplosion = useCallback(() => {
-    if (barExploded) return;
-    
-    setBarExploded(true);
-    setIsShakingBar(false);
-    shakeDataRef.current.isGrabbing = false;
-    
-    // Get position for confetti origin
-    const explosionOrigin = barPosition 
-      ? { x: barPosition.x / window.innerWidth, y: barPosition.y / window.innerHeight }
-      : { x: 0.5, y: 0.1 };
-    
-    // Massive confetti explosion!
-    const duration = 3000;
-    const animationEnd = Date.now() + duration;
-    
-    const randomInRange = (min, max) => Math.random() * (max - min) + min;
-    
-    const interval = setInterval(() => {
-      const timeLeft = animationEnd - Date.now();
-      
-      if (timeLeft <= 0) {
-        clearInterval(interval);
-        // Reset after explosion
-        setTimeout(() => {
-          setBarExploded(false);
-          setBarPosition(null);
-        }, 1000);
-        return;
-      }
-      
-      const particleCount = 50;
-      
-      // Fire from the explosion point
-      confetti({
-        particleCount,
-        startVelocity: 30,
-        spread: 360,
-        origin: explosionOrigin,
-        colors: ['#00ff88', '#ffd700', '#ff4466', '#00ddaa', '#ff6b35', '#4ecdc4']
-      });
-    }, 100);
-    
-    // Track secret discovery
-    discoverSecret('bar_explosion');
-  }, [barExploded, barPosition, discoverSecret]);
 
   // Add global mouse/touch move and up listeners
   useEffect(() => {
