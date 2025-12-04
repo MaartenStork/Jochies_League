@@ -807,11 +807,15 @@ function App() {
 
   // Progress bar shake handlers
   const triggerBarExplosion = useCallback(() => {
-    if (barExploded) return;
+    // Use ref to check if already exploding (state updates are async)
+    if (shakeDataRef.current.hasExploded) return;
+    
+    shakeDataRef.current.hasExploded = true;
+    shakeDataRef.current.isGrabbing = false;
+    shakeDataRef.current.isDragging = false;
     
     setBarExploded(true);
     setIsShakingBar(false);
-    shakeDataRef.current.isGrabbing = false;
     
     // Get position for confetti origin
     const explosionOrigin = barPosition 
@@ -822,8 +826,6 @@ function App() {
     const duration = 3000;
     const animationEnd = Date.now() + duration;
     
-    const randomInRange = (min, max) => Math.random() * (max - min) + min;
-    
     const interval = setInterval(() => {
       const timeLeft = animationEnd - Date.now();
       
@@ -833,6 +835,7 @@ function App() {
         setTimeout(() => {
           setBarExploded(false);
           setBarPosition(null);
+          shakeDataRef.current.hasExploded = false;
         }, 1000);
         return;
       }
@@ -851,7 +854,7 @@ function App() {
     
     // Track secret discovery
     discoverSecret('bar_explosion');
-  }, [barExploded, barPosition, discoverSecret]);
+  }, [barPosition, discoverSecret]);
 
   const startDragging = useCallback((clientX, clientY, rect) => {
     const offsetX = clientX - rect.left;
@@ -908,7 +911,7 @@ function App() {
 
   const handleBarMove = useCallback((e) => {
     // Only process movement if we're actually dragging (not just holding)
-    if (!shakeDataRef.current.isGrabbing || !shakeDataRef.current.isDragging || barExploded) return;
+    if (!shakeDataRef.current.isGrabbing || !shakeDataRef.current.isDragging || shakeDataRef.current.hasExploded) return;
     
     e.preventDefault();
     e.stopPropagation();
@@ -949,10 +952,10 @@ function App() {
     }
     
     // Explode if shaking intensifies - need MANY fast movements
-    if (rapidMovements.length >= 25) {
+    if (rapidMovements.length >= 18) {
       triggerBarExplosion();
     }
-  }, [barExploded, triggerBarExplosion]);
+  }, [triggerBarExplosion]);
 
   const handleBarRelease = useCallback(() => {
     const wasDragging = shakeDataRef.current.isDragging;
