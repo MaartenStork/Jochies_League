@@ -2089,7 +2089,7 @@ function App() {
                 allow="autoplay; fullscreen"
               />
             </div>
-            <p className="hollow-knight-hint">Press F for fullscreen • Use arrow keys to move • Space to jump • X to attack</p>
+            <p className="hollow-knight-hint">Press F for fullscreen • Arrow keys to move • Space to jump • X to attack</p>
           </div>
         </div>
       )}
