@@ -114,6 +114,31 @@ function App() {
   const correctRanking = {1: 'Ian', 2: 'Tobias', 3: 'Derk', 4: 'Guru', 5: 'Job', 6: 'Niels'};
   const rankingNames = ['Derk', 'Maarten', 'Tobias', 'Maas', 'Job', 'Daan', 'Guru', 'Niels', 'Simo', 'Julian', 'Manka', 'Tibi', 'Ian'];
 
+  // Theme system
+  const [currentTheme, setCurrentTheme] = useState('default');
+  const [unlockedThemes, setUnlockedThemes] = useState(['default']);
+  
+  const themes = {
+    default: {
+      name: 'Science Park',
+      colors: {
+        accent: '#00ff88',
+        accentDim: '#00cc6a',
+        accentGlow: 'rgba(0, 255, 136, 0.3)'
+      },
+      background: null
+    },
+    kabouter: {
+      name: 'Kabouter',
+      colors: {
+        accent: '#ff4444',
+        accentDim: '#cc3333',
+        accentGlow: 'rgba(255, 68, 68, 0.3)'
+      },
+      background: '/kabouterbackground.png'
+    }
+  };
+
   // Check for auth token in URL on first load
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -124,6 +149,38 @@ function App() {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
+
+  // Load saved theme and unlocked themes from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('currentTheme');
+    const savedUnlockedThemes = localStorage.getItem('unlockedThemes');
+    
+    if (savedTheme && themes[savedTheme]) {
+      setCurrentTheme(savedTheme);
+    }
+    
+    if (savedUnlockedThemes) {
+      try {
+        const parsed = JSON.parse(savedUnlockedThemes);
+        setUnlockedThemes(parsed);
+      } catch (e) {
+        console.error('Error parsing unlocked themes:', e);
+      }
+    }
+  }, []);
+
+  // Apply theme colors and background
+  useEffect(() => {
+    const theme = themes[currentTheme];
+    if (theme) {
+      document.documentElement.style.setProperty('--accent', theme.colors.accent);
+      document.documentElement.style.setProperty('--accent-dim', theme.colors.accentDim);
+      document.documentElement.style.setProperty('--accent-glow', theme.colors.accentGlow);
+      
+      // Set theme background class on body
+      document.body.className = currentTheme === 'kabouter' ? 'theme-kabouter' : '';
+    }
+  }, [currentTheme]);
 
   // Fetch current user
   const fetchUser = useCallback(async () => {
@@ -438,6 +495,40 @@ function App() {
     setIsDraggingB(false);
   };
 
+  // Unlock a theme
+  const unlockTheme = useCallback((themeId) => {
+    if (!unlockedThemes.includes(themeId) && themes[themeId]) {
+      const newUnlockedThemes = [...unlockedThemes, themeId];
+      setUnlockedThemes(newUnlockedThemes);
+      localStorage.setItem('unlockedThemes', JSON.stringify(newUnlockedThemes));
+      
+      // Auto-switch to the new theme
+      setCurrentTheme(themeId);
+      localStorage.setItem('currentTheme', themeId);
+      
+      // Show themed confetti!
+      confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.3 },
+        colors: [themes[themeId].colors.accent, themes[themeId].colors.accentDim, '#ffd700']
+      });
+      
+      setCheatMessage(`🎨 ${themes[themeId].name} theme unlocked!`);
+      
+      return true;
+    }
+    return false;
+  }, [unlockedThemes, themes]);
+
+  // Switch theme
+  const switchTheme = useCallback((themeId) => {
+    if (unlockedThemes.includes(themeId) && themes[themeId]) {
+      setCurrentTheme(themeId);
+      localStorage.setItem('currentTheme', themeId);
+    }
+  }, [unlockedThemes, themes]);
+
   // Cheat code handler
   const handleCheatSubmit = (e) => {
     e.preventDefault();
@@ -484,9 +575,19 @@ function App() {
         }, 5000);
         break;
       case 'reset':
-        document.body.style.setProperty('--accent', '#00ff88');
+        setCurrentTheme('default');
+        localStorage.setItem('currentTheme', 'default');
         setMonkeyCursor(false);
         setWrongAttempts(0);
+        break;
+      // Theme unlocks
+      case 'kabouter':
+      case 'kabouterborrel':
+      case 'kabout borrel':
+      case 'kabout':
+        unlockTheme('kabouter');
+        discoverSecret('theme_kabouter');
+        success = true;
         break;
       // Smiling Friends characters
       case 'pim':
@@ -952,7 +1053,7 @@ function App() {
     }
     
     // Explode if shaking intensifies - need MANY fast movements
-    if (rapidMovements.length >= 18) {
+    if (rapidMovements.length >= 25) {
       triggerBarExplosion();
     }
   }, [triggerBarExplosion]);
@@ -1349,6 +1450,43 @@ function App() {
                           </div>
                         ))}
                       </div>
+                      
+                      {/* Themes section */}
+                      {unlockedThemes.length > 0 && (
+                        <>
+                          <div className="secret-divider" />
+                          <div className="secret-themes-section">
+                            <div className="secret-themes-header">🎨 Themes</div>
+                            <div className="secret-themes-list">
+                              {Object.keys(themes).map(themeId => {
+                                const theme = themes[themeId];
+                                const isUnlocked = unlockedThemes.includes(themeId);
+                                const isActive = currentTheme === themeId;
+                                
+                                if (!isUnlocked) return null;
+                                
+                                return (
+                                  <button
+                                    key={themeId}
+                                    className={`secret-theme-item ${isActive ? 'active' : ''}`}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      switchTheme(themeId);
+                                    }}
+                                  >
+                                    <div 
+                                      className="secret-theme-color"
+                                      style={{ background: `linear-gradient(135deg, ${theme.colors.accent}, ${theme.colors.accentDim})` }}
+                                    />
+                                    <span className="secret-theme-name">{theme.name}</span>
+                                    {isActive && <span className="secret-theme-check">✓</span>}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </>
                 )}

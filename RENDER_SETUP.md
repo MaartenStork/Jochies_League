@@ -65,3 +65,4 @@ FRONTEND_URL=http://localhost:3000
 Now your local dev will also use Supabase (same database as production)!
 
 
+
