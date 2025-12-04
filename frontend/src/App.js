@@ -177,8 +177,14 @@ function App() {
       document.documentElement.style.setProperty('--accent-dim', theme.colors.accentDim);
       document.documentElement.style.setProperty('--accent-glow', theme.colors.accentGlow);
       
-      // Set theme background class on body
-      document.body.className = currentTheme === 'kabouter' ? 'theme-kabouter' : '';
+      // Set theme background
+      if (theme.background) {
+        document.documentElement.style.setProperty('--theme-background', `url(${process.env.PUBLIC_URL}${theme.background})`);
+        document.body.className = 'theme-kabouter';
+      } else {
+        document.documentElement.style.setProperty('--theme-background', 'none');
+        document.body.className = '';
+      }
     }
   }, [currentTheme]);
 
@@ -1053,7 +1059,7 @@ function App() {
     }
     
     // Explode if shaking intensifies - need MANY fast movements
-    if (rapidMovements.length >= 25) {
+    if (rapidMovements.length >= 40) {
       triggerBarExplosion();
     }
   }, [triggerBarExplosion]);
