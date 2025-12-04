@@ -98,6 +98,12 @@ function App() {
   const [secretProgress, setSecretProgress] = useState(null);
   const [secretDropdownOpen, setSecretDropdownOpen] = useState(false);
 
+  // Progress bar shake easter egg
+  const [isShakingBar, setIsShakingBar] = useState(false);
+  const [barExploded, setBarExploded] = useState(false);
+  const shakeDataRef = useRef({ startX: 0, startY: 0, movements: [], isGrabbing: false });
+  const barShakeTimerRef = useRef(null);
+
   // Ranking game easter egg
   const [showRanking, setShowRanking] = useState(false);
   const [rankingAnswers, setRankingAnswers] = useState({1: null, 2: null, 3: null, 4: null, 5: null, 6: null});
@@ -796,6 +802,137 @@ function App() {
     return rankingNames.filter(n => !usedNames.includes(n));
   };
 
+  // Progress bar shake handlers
+  const handleBarGrab = (e) => {
+    if (barExploded) return;
+    
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
+    shakeDataRef.current = {
+      startX: clientX,
+      startY: clientY,
+      lastX: clientX,
+      lastY: clientY,
+      movements: [],
+      isGrabbing: true,
+      lastTime: Date.now()
+    };
+    
+    setIsShakingBar(false);
+  };
+
+  const handleBarMove = (e) => {
+    if (!shakeDataRef.current.isGrabbing || barExploded) return;
+    
+    e.preventDefault();
+    
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const now = Date.now();
+    
+    const deltaX = clientX - shakeDataRef.current.lastX;
+    const deltaY = clientY - shakeDataRef.current.lastY;
+    const deltaTime = now - shakeDataRef.current.lastTime;
+    
+    // Calculate velocity
+    const velocity = Math.sqrt(deltaX * deltaX + deltaY * deltaY) / (deltaTime || 1);
+    
+    // Track movements
+    shakeDataRef.current.movements.push({ velocity, time: now });
+    shakeDataRef.current.lastX = clientX;
+    shakeDataRef.current.lastY = clientY;
+    shakeDataRef.current.lastTime = now;
+    
+    // Keep only recent movements (last 500ms)
+    shakeDataRef.current.movements = shakeDataRef.current.movements.filter(
+      m => now - m.time < 500
+    );
+    
+    // Check if shaking (multiple rapid movements)
+    const rapidMovements = shakeDataRef.current.movements.filter(m => m.velocity > 1.5);
+    
+    if (rapidMovements.length >= 5) {
+      setIsShakingBar(true);
+    }
+    
+    // Explode if shaking intensifies
+    if (rapidMovements.length >= 10) {
+      triggerBarExplosion();
+    }
+  };
+
+  const handleBarRelease = () => {
+    shakeDataRef.current.isGrabbing = false;
+    
+    // Reset shake visual after a delay
+    if (barShakeTimerRef.current) {
+      clearTimeout(barShakeTimerRef.current);
+    }
+    barShakeTimerRef.current = setTimeout(() => {
+      setIsShakingBar(false);
+    }, 200);
+  };
+
+  const triggerBarExplosion = () => {
+    if (barExploded) return;
+    
+    setBarExploded(true);
+    setIsShakingBar(false);
+    shakeDataRef.current.isGrabbing = false;
+    
+    // Massive confetti explosion!
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    
+    const randomInRange = (min, max) => Math.random() * (max - min) + min;
+    
+    const interval = setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+      
+      if (timeLeft <= 0) {
+        clearInterval(interval);
+        // Reset after explosion
+        setTimeout(() => setBarExploded(false), 1000);
+        return;
+      }
+      
+      const particleCount = 50;
+      
+      // Fire from multiple points
+      confetti({
+        particleCount,
+        startVelocity: 30,
+        spread: 360,
+        origin: { x: randomInRange(0.1, 0.9), y: randomInRange(0, 0.3) },
+        colors: ['#00ff88', '#ffd700', '#ff4466', '#00ddaa', '#ff6b35', '#4ecdc4']
+      });
+    }, 100);
+    
+    // Track secret discovery
+    discoverSecret('bar_explosion');
+  };
+
+  // Add global mouse/touch move and up listeners when grabbing
+  useEffect(() => {
+    const handleGlobalMove = (e) => handleBarMove(e);
+    const handleGlobalUp = () => handleBarRelease();
+    
+    if (shakeDataRef.current.isGrabbing) {
+      document.addEventListener('mousemove', handleGlobalMove);
+      document.addEventListener('mouseup', handleGlobalUp);
+      document.addEventListener('touchmove', handleGlobalMove, { passive: false });
+      document.addEventListener('touchend', handleGlobalUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleGlobalMove);
+        document.removeEventListener('mouseup', handleGlobalUp);
+        document.removeEventListener('touchmove', handleGlobalMove);
+        document.removeEventListener('touchend', handleGlobalUp);
+      };
+    }
+  }, [barExploded]);
+
   const handleLogin = () => {
     window.location.href = `${API_URL}/auth/login`;
   };
@@ -1095,13 +1232,16 @@ function App() {
             {secretProgress && secretProgress.found_secrets.includes('counter') && (
               <div className="secret-counter-widget">
                 <div 
-                  className="secret-counter-main"
-                  onClick={() => setSecretDropdownOpen(!secretDropdownOpen)}
+                  className={`secret-counter-main ${isShakingBar ? 'shaking' : ''} ${barExploded ? 'exploded' : ''}`}
+                  onClick={() => !isShakingBar && setSecretDropdownOpen(!secretDropdownOpen)}
+                  onMouseDown={handleBarGrab}
+                  onTouchStart={handleBarGrab}
+                  style={{ cursor: barExploded ? 'not-allowed' : (shakeDataRef.current.isGrabbing ? 'grabbing' : 'grab') }}
                 >
                   <div className="secret-progress-bar">
                     <div 
                       className="secret-progress-fill"
-                      style={{ width: `${secretProgress.percentage}%` }}
+                      style={{ width: barExploded ? '0%' : `${secretProgress.percentage}%` }}
                     />
                   </div>
                 </div>
