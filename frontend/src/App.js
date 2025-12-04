@@ -916,20 +916,20 @@ function App() {
     shakeDataRef.current.lastY = clientY;
     shakeDataRef.current.lastTime = now;
     
-    // Keep only recent movements (last 500ms)
+    // Keep only recent movements (last 400ms - tighter window)
     shakeDataRef.current.movements = shakeDataRef.current.movements.filter(
-      m => now - m.time < 500
+      m => now - m.time < 400
     );
     
-    // Check if shaking (multiple rapid movements)
-    const rapidMovements = shakeDataRef.current.movements.filter(m => m.velocity > 1.5);
+    // Check if shaking (multiple rapid movements with higher velocity threshold)
+    const rapidMovements = shakeDataRef.current.movements.filter(m => m.velocity > 2.5);
     
-    if (rapidMovements.length >= 5) {
+    if (rapidMovements.length >= 8) {
       setIsShakingBar(true);
     }
     
-    // Explode if shaking intensifies
-    if (rapidMovements.length >= 10) {
+    // Explode if shaking intensifies - need MANY fast movements
+    if (rapidMovements.length >= 25) {
       triggerBarExplosion();
     }
   }, [barExploded, triggerBarExplosion]);
