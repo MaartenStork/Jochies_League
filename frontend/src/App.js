@@ -97,6 +97,7 @@ function App() {
   // Secret tracking
   const [secretProgress, setSecretProgress] = useState(null);
   const [secretDropdownOpen, setSecretDropdownOpen] = useState(false);
+  const [mobileSecretPopupOpen, setMobileSecretPopupOpen] = useState(false);
 
   // Progress bar shake easter egg
   const [isShakingBar, setIsShakingBar] = useState(false);
@@ -1431,7 +1432,16 @@ function App() {
               src={user.picture} 
               alt={user.name} 
               className="profile-icon"
-              onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+              onClick={() => {
+                // On mobile, open secrets popup if available, otherwise profile dropdown
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile && secretProgress && secretProgress.found_secrets.includes('counter')) {
+                  setMobileSecretPopupOpen(!mobileSecretPopupOpen);
+                  setProfileDropdownOpen(false);
+                } else {
+                  setProfileDropdownOpen(!profileDropdownOpen);
+                }
+              }}
             />
             {profileDropdownOpen && (
               <>
@@ -1535,6 +1545,102 @@ function App() {
                   </>
                 )}
               </div>
+            )}
+            
+            {/* Mobile Secret Popup - Triggered by profile icon on mobile */}
+            {mobileSecretPopupOpen && secretProgress && secretProgress.found_secrets.includes('counter') && (
+              <>
+                <div className="mobile-secret-backdrop" onClick={() => setMobileSecretPopupOpen(false)} />
+                <div className="mobile-secret-popup">
+                  <div className="mobile-secret-header">
+                    <div className="mobile-secret-user">
+                      <img src={user.picture} alt={user.name} className="mobile-secret-avatar" />
+                      <div>
+                        <div className="mobile-secret-name">{user.name}</div>
+                        <button className="mobile-secret-logout" onClick={() => {
+                          setMobileSecretPopupOpen(false);
+                          handleLogout();
+                        }}>
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                    <button className="mobile-secret-close" onClick={() => setMobileSecretPopupOpen(false)}>✕</button>
+                  </div>
+                  
+                  <div 
+                    ref={barRef}
+                    className={`secret-counter-main mobile-bar ${isShakingBar ? 'shaking' : ''} ${barExploded ? 'exploded' : ''} ${barPosition ? 'dragging' : ''}`}
+                    onMouseDown={handleBarGrab}
+                    onTouchStart={handleBarGrab}
+                    style={{ 
+                      cursor: barExploded ? 'not-allowed' : (barPosition ? 'grabbing' : 'grab'),
+                      ...(barPosition ? {
+                        position: 'fixed',
+                        left: `${barPosition.x}px`,
+                        top: `${barPosition.y}px`,
+                        zIndex: 10000
+                      } : {})
+                    }}
+                  >
+                    <div className="secret-progress-bar">
+                      <div 
+                        className="secret-progress-fill"
+                        style={{ width: barExploded ? '0%' : `${secretProgress.percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="mobile-secret-content">
+                    <div className="secret-list">
+                      {secretProgress.found_secrets
+                        .filter(secret => secret !== 'chess_victory' && secret !== 'theme_kabouter')
+                        .map(secret => (
+                          <div key={secret} className="secret-item">
+                            ✓ {secret.replace(/_/g, ' ')}
+                          </div>
+                        ))}
+                    </div>
+                    
+                    {/* Themes section */}
+                    {unlockedThemes.length > 0 && (
+                      <>
+                        <div className="secret-divider" />
+                        <div className="secret-themes-section">
+                          <div className="secret-themes-header">🎨 Themes</div>
+                          <div className="secret-themes-list">
+                            {Object.keys(themes).map(themeId => {
+                              const theme = themes[themeId];
+                              const isUnlocked = unlockedThemes.includes(themeId);
+                              const isActive = currentTheme === themeId;
+                              
+                              if (!isUnlocked) return null;
+                              
+                              return (
+                                <button
+                                  key={themeId}
+                                  className={`secret-theme-item ${isActive ? 'active' : ''}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    switchTheme(themeId);
+                                  }}
+                                >
+                                  <div 
+                                    className="secret-theme-color"
+                                    style={{ background: `linear-gradient(135deg, ${theme.colors.accent}, ${theme.colors.accentDim})` }}
+                                  />
+                                  <span className="secret-theme-name">{theme.name}</span>
+                                  {isActive && <span className="secret-theme-check">✓</span>}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </>
             )}
           </div>
         )}
