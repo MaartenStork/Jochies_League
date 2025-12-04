@@ -527,7 +527,17 @@ function App() {
 
   // Unlock a theme
   const unlockTheme = useCallback((themeId) => {
-    if (!unlockedThemes.includes(themeId) && themes[themeId]) {
+    if (!themes[themeId]) return false;
+    
+    // Always save to database, even if already unlocked locally
+    if (themeId === 'kabouter') {
+      discoverSecret('theme_kabouter');
+    } else if (themeId === 'chess') {
+      discoverSecret('chess_victory');
+    }
+    
+    // Only show visual effects and update state if newly unlocked
+    if (!unlockedThemes.includes(themeId)) {
       const newUnlockedThemes = [...unlockedThemes, themeId];
       setUnlockedThemes(newUnlockedThemes);
       localStorage.setItem('unlockedThemes', JSON.stringify(newUnlockedThemes));
@@ -546,15 +556,11 @@ function App() {
       
       setCheatMessage(`🎨 ${themes[themeId].name} theme unlocked!`);
       
-      // Save to database based on theme
-      if (themeId === 'kabouter') {
-        discoverSecret('theme_kabouter');
-      } else if (themeId === 'chess') {
-        discoverSecret('chess_victory');
-      }
-      
       return true;
     }
+    
+    // Already unlocked, but we still saved to database above
+    setCheatMessage(`🎨 ${themes[themeId].name} theme already unlocked!`);
     return false;
   }, [unlockedThemes, themes, discoverSecret]);
 
