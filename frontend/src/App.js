@@ -1641,7 +1641,18 @@ function App() {
   return (
     <div className={`app ${show67Tilt ? 'tilt-67' : ''}`}>
       <header className={`header ${!user ? 'login-header' : ''}`}>
-        <h1 className="logo">Jo<span ref={dropZoneRef} className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`} onDragOver={handleDropZoneDragOver} onDrop={handleDropZoneDrop}>{bPlaced && 'b'}</span>{bPlaced ? ' chies' : 'chies'} League</h1>
+        <h1 className="logo">
+          Jo
+          <span 
+            ref={dropZoneRef} 
+            className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`} 
+            onDragOver={handleDropZoneDragOver} 
+            onDrop={handleDropZoneDrop}
+          >
+            {bPlaced && 'b'}
+          </span>
+          {bPlaced ? ' chies' : 'chies'} League
+        </h1>
         <p className="tagline">SP grind time</p>
         
         {/* Profile icon - top right */}
@@ -1940,7 +1951,25 @@ function App() {
       {/* Instagram-style Feed */}
       {leaderboard.length > 0 && (
         <div className="feed-section">
-          <h2 className="feed-title">📷 Today's {bPlaced ? 'atch' : <span className="batch-word"><span ref={bRef} className={`draggable-b ${isDraggingB ? 'dragging' : ''}`} draggable={!bPlaced} onDragStart={handleBDragStart} onDragEnd={handleBDragEnd} onTouchStart={handleBTouchStart} onTouchMove={handleBTouchMove} onTouchEnd={handleBTouchEnd}>B</span>atch</span>}</h2>
+          <h2 className="feed-title">
+            📷 Today's {bPlaced ? 'atch' : (
+              <span className="batch-word">
+                <span 
+                  ref={bRef} 
+                  className={`draggable-b ${isDraggingB ? 'dragging' : ''}`} 
+                  draggable={!bPlaced} 
+                  onDragStart={handleBDragStart} 
+                  onDragEnd={handleBDragEnd} 
+                  onTouchStart={handleBTouchStart} 
+                  onTouchMove={handleBTouchMove} 
+                  onTouchEnd={handleBTouchEnd}
+                >
+                  B
+                </span>
+                atch
+              </span>
+            )}
+          </h2>
           
           <div className="feed">
             {leaderboard.map((entry) => (
