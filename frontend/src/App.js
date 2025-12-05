@@ -122,6 +122,9 @@ function App() {
   const correctRanking = {1: 'Ian', 2: 'Tobias', 3: 'Derk', 4: 'Guru', 5: 'Job', 6: 'Niels'};
   const rankingNames = ['Derk', 'Maarten', 'Tobias', 'Maas', 'Job', 'Daan', 'Guru', 'Niels', 'Simo', 'Julian', 'Manka', 'Tibi', 'Ian'];
 
+  // Flag to trigger 100% celebration (to avoid circular dependency)
+  const [shouldCelebrate100, setShouldCelebrate100] = useState(false);
+
   // SIMO peek easter egg
   const [showSimo, setShowSimo] = useState(false);
   const simoImageRef = useRef(null);
@@ -290,17 +293,15 @@ function App() {
         setUnlockedThemes(newUnlockedThemes);
         localStorage.setItem('unlockedThemes', JSON.stringify(newUnlockedThemes));
         
-        // Celebrate reaching 100% for the first time!
+        // Flag to celebrate reaching 100% (handled in separate useEffect)
         if (justReached100) {
-          setTimeout(() => {
-            unlockTheme('legendary');
-          }, 500);
+          setShouldCelebrate100(true);
         }
       }
     } catch (err) {
       console.error('Error fetching secret progress:', err);
     }
-  }, [user, unlockTheme]);
+  }, [user]);
 
   // Track secret discovery with immediate UI update
   const discoverSecret = useCallback(async (secretCode) => {
@@ -651,6 +652,16 @@ function App() {
       localStorage.setItem('currentTheme', themeId);
     }
   }, [unlockedThemes, themes]);
+
+  // Handle 100% completion celebration (separated to avoid circular dependency)
+  useEffect(() => {
+    if (shouldCelebrate100) {
+      setShouldCelebrate100(false);
+      setTimeout(() => {
+        unlockTheme('legendary');
+      }, 500);
+    }
+  }, [shouldCelebrate100, unlockTheme]);
 
   // Cheat code handler
   const handleCheatSubmit = (e) => {
@@ -1641,18 +1652,7 @@ function App() {
   return (
     <div className={`app ${show67Tilt ? 'tilt-67' : ''}`}>
       <header className={`header ${!user ? 'login-header' : ''}`}>
-        <h1 className="logo">
-          Jo
-          <span 
-            ref={dropZoneRef} 
-            className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`} 
-            onDragOver={handleDropZoneDragOver} 
-            onDrop={handleDropZoneDrop}
-          >
-            {bPlaced && 'b'}
-          </span>
-          {bPlaced ? ' chies' : 'chies'} League
-        </h1>
+        <h1 className="logo">Jo<span ref={dropZoneRef} className={`b-drop-zone ${isDraggingB ? 'active' : ''} ${bPlaced ? 'has-b' : ''}`} onDragOver={handleDropZoneDragOver} onDrop={handleDropZoneDrop}>{bPlaced && 'b'}</span>{bPlaced ? ' chies' : 'chies'} League</h1>
         <p className="tagline">SP grind time</p>
         
         {/* Profile icon - top right */}
@@ -1951,25 +1951,7 @@ function App() {
       {/* Instagram-style Feed */}
       {leaderboard.length > 0 && (
         <div className="feed-section">
-          <h2 className="feed-title">
-            📷 Today's {bPlaced ? 'atch' : (
-              <span className="batch-word">
-                <span 
-                  ref={bRef} 
-                  className={`draggable-b ${isDraggingB ? 'dragging' : ''}`} 
-                  draggable={!bPlaced} 
-                  onDragStart={handleBDragStart} 
-                  onDragEnd={handleBDragEnd} 
-                  onTouchStart={handleBTouchStart} 
-                  onTouchMove={handleBTouchMove} 
-                  onTouchEnd={handleBTouchEnd}
-                >
-                  B
-                </span>
-                atch
-              </span>
-            )}
-          </h2>
+          <h2 className="feed-title">📷 Today's {bPlaced ? 'atch' : <span className="batch-word"><span ref={bRef} className={`draggable-b ${isDraggingB ? 'dragging' : ''}`} draggable={!bPlaced} onDragStart={handleBDragStart} onDragEnd={handleBDragEnd} onTouchStart={handleBTouchStart} onTouchMove={handleBTouchMove} onTouchEnd={handleBTouchEnd}>B</span>atch</span>}</h2>
           
           <div className="feed">
             {leaderboard.map((entry) => (
