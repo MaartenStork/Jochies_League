@@ -126,33 +126,9 @@ function App() {
   const [showSimo, setShowSimo] = useState(false);
   const simoImageRef = useRef(null);
 
-  // Sacha word sequence easter egg
-  const [showSachaWord, setShowSachaWord] = useState(false);
-  const [sachaWord, setSachaWord] = useState('');
-  const sachaWordsRef = useRef([
-    'Snoehscker',
-    'shbingbing',
-    'schooba',
-    'sshcooby',
-    'simo',
-    'schnabsta',
-    'schbamba',
-    'shaloomba',
-    'shagroomka',
-    'schalababa',
-    'schalambino',
-    'shbimbi',
-    'schoema',
-    'shcobooba',
-    'schalabama',
-    'shakra',
-    'showroom',
-    'schadowrealm',
-    'sacherino',
-    'shaloom',
-    'shmaloogle'
-  ]);
-  const sachaSequenceRef = useRef(null);
+  // Sacha names easter egg
+  const [showSachaNames, setShowSachaNames] = useState(false);
+  const [currentSachaName, setCurrentSachaName] = useState('');
   const sachaAudioRef = useRef(null);
 
   // Theme system
@@ -198,6 +174,12 @@ function App() {
       // Clean the URL without reloading
       window.history.replaceState({}, document.title, window.location.pathname);
     }
+  }, []);
+
+  // Preload SIMO image for smooth animation
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/SIMO.jpg';
   }, []);
 
   // Load saved theme from localStorage (unlocked themes come from secrets)
@@ -612,74 +594,6 @@ function App() {
     }
   }, [unlockedThemes, themes]);
 
-  // Sacha word sequence function
-  const startSachaSequence = useCallback(() => {
-    // Clear any existing sequence
-    if (sachaSequenceRef.current) {
-      clearTimeout(sachaSequenceRef.current);
-    }
-    
-    const words = sachaWordsRef.current;
-    let currentIndex = 0;
-    
-    // Calculate delays - start slow, ramp up VERY fast to a blur
-    const delays = words.map((_, i) => {
-      if (i < 3) return 500;  // First 3: slow start (500ms each)
-      if (i < 6) return 250;  // Next 3: medium (250ms each)
-      if (i < 10) return 150; // Next 4: faster (150ms each)
-      if (i < 15) return 80;  // Next 5: very fast (80ms each)
-      return 40;              // Last 6: SUPER FAST blur (40ms each) - barely readable!
-    });
-    
-    const showNextWord = () => {
-      if (currentIndex >= words.length) {
-        return;
-      }
-      
-      setSachaWord(words[currentIndex]);
-      setShowSachaWord(true);
-      
-      // Check if this is the last word
-      if (currentIndex === words.length - 1) {
-        // Last word! Play applause immediately and trigger confetti
-        if (sachaAudioRef.current) {
-          sachaAudioRef.current.play();
-        }
-        
-        // Confetti celebration!
-        confetti({
-          particleCount: 200,
-          spread: 100,
-          origin: { y: 0.5 },
-          colors: ['#ffd700', '#ffed4e', '#fff', '#ff6b35', '#4ecdc4']
-        });
-        
-        // Hide after applause finishes (clapping.mp3 is about 3 seconds)
-        setTimeout(() => {
-          setShowSachaWord(false);
-        }, 3000);
-        return;
-      }
-      
-      const delay = delays[currentIndex];
-      currentIndex++;
-      
-      sachaSequenceRef.current = setTimeout(showNextWord, delay);
-    };
-    
-    // Start the sequence
-    showNextWord();
-  }, []);
-
-  // Cleanup sequence on unmount
-  useEffect(() => {
-    return () => {
-      if (sachaSequenceRef.current) {
-        clearTimeout(sachaSequenceRef.current);
-      }
-    };
-  }, []);
-
   // Cheat code handler
   const handleCheatSubmit = (e) => {
     e.preventDefault();
@@ -857,11 +771,6 @@ function App() {
         // Animation: creep up slowly (2s) to 60%, hold briefly (0.3s), then zip down VERY fast (0.2s)
         // Total duration: 2.5s
         setTimeout(() => setShowSimo(false), 2500);
-        break;
-      case 'sacha':
-        // Start the word sequence
-        startSachaSequence();
-        discoverSecret('sacha');
         break;
       case 'counter':
       case 'progress':
@@ -2266,17 +2175,6 @@ function App() {
           />
         </div>
       )}
-
-      {/* Sacha Word Sequence Easter Egg */}
-      {showSachaWord && (
-        <div className="sacha-word-overlay">
-          <div className="sacha-spotlight"></div>
-          <div className="sacha-word">{sachaWord}</div>
-        </div>
-      )}
-      
-      {/* Hidden audio for applause */}
-      <audio ref={sachaAudioRef} src="/clapping.mp3" preload="auto" />
     </div>
   );
 }
