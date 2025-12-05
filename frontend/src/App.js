@@ -1196,7 +1196,6 @@ function App() {
   const triggerSachaNames = useCallback(() => {
     const sachaNames = [
       'Snoehscker',
-      'Shmaloogle',
       'shbingbing',
       'schooba',
       'sshcooby',
@@ -1207,24 +1206,45 @@ function App() {
       'schalababa',
       'schalambino',
       'shbimbi',
-      'schoema'
+      'schoema',
+      'shbingle',
+      'simo',
+      'shoompaloompa',
+      'schalala',
+      'shamba',
+      'shobio',
+      'shoeboeroe',
+      'shakboe',
+      'slabarinie',
+      'swambini',
+      'shmaloogle'
     ];
     
     // Intervals for each name (in milliseconds) - starts slow, ramps up FAST
     const intervals = [
-      800,  // First name - slow
-      700,  // Second name
-      600,  // Third name
-      450,  // Starting to speed up
-      300,  // Getting faster
-      200,  // Fast
-      150,  // Very fast
-      100,  // Super fast
-      80,   // Barely readable
-      70,   // Almost too fast
-      60,   // Lightning fast
-      55,   // Insanely fast
-      50    // Final one
+      800,  // 1 - slow
+      750,  // 2
+      700,  // 3
+      650,  // 4
+      600,  // 5
+      500,  // 6 - starting to speed up
+      400,  // 7
+      300,  // 8 - getting faster
+      250,  // 9
+      200,  // 10 - fast
+      150,  // 11 - very fast
+      120,  // 12
+      100,  // 13 - super fast
+      80,   // 14 - barely readable
+      70,   // 15
+      60,   // 16 - lightning fast
+      55,   // 17
+      50,   // 18 - insanely fast
+      45,   // 19
+      40,   // 20 - BLUR
+      35,   // 21
+      30,   // 22 - IMPOSSIBLE
+      25    // 23 - Final one (shmaloogle)
     ];
     
     setShowSachaNames(true);
@@ -1235,9 +1255,10 @@ function App() {
         setCurrentSachaName(sachaNames[currentIndex]);
         
         if (currentIndex === sachaNames.length - 1) {
-          // Last name - play applause and hold for a bit
+          // Last name - play applause at 2x speed and hold for a bit
           if (sachaAudioRef.current) {
             sachaAudioRef.current.currentTime = 0;
+            sachaAudioRef.current.playbackRate = 2.0; // Play at 2x speed!
             sachaAudioRef.current.play().catch(err => console.log('Audio play failed:', err));
           }
           setTimeout(() => {
