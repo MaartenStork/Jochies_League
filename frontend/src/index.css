@@ -2445,10 +2445,22 @@ body:not(.theme-kabouter):not(.theme-chess)::before {
   flex-shrink: 0;
 }
 
+.hollow-knight-title-section {
+  flex: 1;
+}
+
 .hollow-knight-header h2 {
   margin: 0;
   font-size: 1.3rem;
   color: var(--text-primary);
+}
+
+.hollow-knight-subtitle {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-style: italic;
+  font-weight: 400;
 }
 
 .hollow-knight-close {

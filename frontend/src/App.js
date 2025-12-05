@@ -2001,7 +2001,10 @@ function App() {
         <div className="hollow-knight-overlay" onClick={() => setShowHollowKnight(false)}>
           <div className="hollow-knight-modal" onClick={(e) => e.stopPropagation()}>
             <div className="hollow-knight-header">
-              <h2>♟️ Hollow Knight</h2>
+              <div className="hollow-knight-title-section">
+                <h2>♟️ Hollow Knight</h2>
+                <p className="hollow-knight-subtitle">dit doe je niet voor een bonus maar voor de love of the game</p>
+              </div>
               <button className="hollow-knight-close" onClick={() => setShowHollowKnight(false)}>✕</button>
             </div>
             <iframe
@@ -2019,7 +2022,10 @@ function App() {
         <div className="hollow-knight-overlay" onClick={() => setShowIwbtc(false)}>
           <div className="hollow-knight-modal" onClick={(e) => e.stopPropagation()}>
             <div className="hollow-knight-header">
-              <h2>🎮 I Wanna Be The Cat</h2>
+              <div className="hollow-knight-title-section">
+                <h2>🎮 I Wanna Be The Cat</h2>
+                <p className="hollow-knight-subtitle">dit doe je niet voor een bonus maar voor de love of the game</p>
+              </div>
               <button className="hollow-knight-close" onClick={() => setShowIwbtc(false)}>✕</button>
             </div>
             <iframe
