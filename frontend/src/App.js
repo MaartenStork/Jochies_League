@@ -1255,19 +1255,35 @@ function App() {
         setCurrentSachaName(sachaNames[currentIndex]);
         
         if (currentIndex === sachaNames.length - 1) {
-          // Last name - play applause at 2x speed and hold for a bit
-          if (sachaAudioRef.current) {
-            sachaAudioRef.current.currentTime = 0;
-            sachaAudioRef.current.playbackRate = 2.0; // Play at 2x speed!
-            sachaAudioRef.current.play().catch(err => console.log('Audio play failed:', err));
-          }
+          // Last name - CONFETTI! Play audio and hold longer
+          confetti({
+            particleCount: 200,
+            spread: 100,
+            origin: { y: 0.5 },
+            colors: ['#ffffff', '#ffd700', '#00ff88', '#ff4466']
+          });
+          
+          // Audio is already playing from previous step
+          
+          // Hold on final name longer
           setTimeout(() => {
             setShowSachaNames(false);
             setCurrentSachaName('');
-          }, 1500);
+          }, 2500);
         } else {
           // Schedule next name
           currentIndex++;
+          
+          // Start audio slightly BEFORE the last name appears
+          if (currentIndex === sachaNames.length - 1) {
+            // We're about to show the last name - start audio NOW
+            if (sachaAudioRef.current) {
+              sachaAudioRef.current.currentTime = 0;
+              sachaAudioRef.current.playbackRate = 2.0; // Play at 2x speed!
+              sachaAudioRef.current.play().catch(err => console.log('Audio play failed:', err));
+            }
+          }
+          
           setTimeout(showNextName, intervals[currentIndex - 1]);
         }
       }
