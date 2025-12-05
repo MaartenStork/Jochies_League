@@ -182,6 +182,12 @@ function App() {
     img.src = '/SIMO.jpg';
   }, []);
 
+  // Preload Sacha applause audio
+  useEffect(() => {
+    const audio = new Audio('/clapping.mp3');
+    sachaAudioRef.current = audio;
+  }, []);
+
   // Load saved theme from localStorage (unlocked themes come from secrets)
   useEffect(() => {
     const savedTheme = localStorage.getItem('currentTheme');
@@ -772,6 +778,11 @@ function App() {
         // Total duration: 2.5s
         setTimeout(() => setShowSimo(false), 2500);
         break;
+      case 'sacha':
+        // Start the Sacha names animation sequence
+        triggerSachaNames();
+        discoverSecret('sacha_names');
+        break;
       case 'counter':
       case 'progress':
       case 'secrets':
@@ -1179,6 +1190,69 @@ function App() {
         setBarPosition(null); // Return to original position
       }, 200);
     }
+  }, []);
+
+  // Sacha names animation sequence
+  const triggerSachaNames = useCallback(() => {
+    const sachaNames = [
+      'Snoehscker',
+      'Shmaloogle',
+      'shbingbing',
+      'schooba',
+      'sshcooby',
+      'schnabsta',
+      'schbamba',
+      'shaloomba',
+      'shagroomka',
+      'schalababa',
+      'schalambino',
+      'shbimbi',
+      'schoema'
+    ];
+    
+    // Intervals for each name (in milliseconds) - starts slow, ramps up FAST
+    const intervals = [
+      800,  // First name - slow
+      700,  // Second name
+      600,  // Third name
+      450,  // Starting to speed up
+      300,  // Getting faster
+      200,  // Fast
+      150,  // Very fast
+      100,  // Super fast
+      80,   // Barely readable
+      70,   // Almost too fast
+      60,   // Lightning fast
+      55,   // Insanely fast
+      50    // Final one
+    ];
+    
+    setShowSachaNames(true);
+    let currentIndex = 0;
+    
+    const showNextName = () => {
+      if (currentIndex < sachaNames.length) {
+        setCurrentSachaName(sachaNames[currentIndex]);
+        
+        if (currentIndex === sachaNames.length - 1) {
+          // Last name - play applause and hold for a bit
+          if (sachaAudioRef.current) {
+            sachaAudioRef.current.currentTime = 0;
+            sachaAudioRef.current.play().catch(err => console.log('Audio play failed:', err));
+          }
+          setTimeout(() => {
+            setShowSachaNames(false);
+            setCurrentSachaName('');
+          }, 1500);
+        } else {
+          // Schedule next name
+          currentIndex++;
+          setTimeout(showNextName, intervals[currentIndex - 1]);
+        }
+      }
+    };
+    
+    showNextName();
   }, []);
 
   // Add global mouse/touch move and up listeners
@@ -2175,6 +2249,20 @@ function App() {
           />
         </div>
       )}
+
+      {/* Sacha Names Easter Egg */}
+      {showSachaNames && (
+        <div className="sacha-names-overlay">
+          <div className="sacha-spotlight">
+            <div className="sacha-name">{currentSachaName}</div>
+          </div>
+        </div>
+      )}
+
+      {/* Hidden audio element for Sacha applause */}
+      <audio ref={sachaAudioRef} preload="auto">
+        <source src="/clapping.mp3" type="audio/mpeg" />
+      </audio>
     </div>
   );
 }

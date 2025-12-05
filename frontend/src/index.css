@@ -2637,3 +2637,88 @@ body:not(.theme-kabouter):not(.theme-chess)::before {
     width: 200px;
   }
 }
+
+/* Sacha Names Easter Egg */
+.sacha-names-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: sachaFadeIn 0.3s ease-out;
+}
+
+@keyframes sachaFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.sacha-spotlight {
+  position: relative;
+  padding: 60px 80px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
+    transparent 70%
+  );
+  animation: spotlightPulse 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes spotlightPulse {
+  from {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  to {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+  }
+}
+
+.sacha-name {
+  font-size: 4rem;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  text-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.8),
+    0 0 40px rgba(255, 255, 255, 0.6),
+    0 0 60px rgba(255, 255, 255, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.5);
+  letter-spacing: 2px;
+  animation: nameAppear 0.2s ease-out;
+  white-space: nowrap;
+}
+
+@keyframes nameAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .sacha-name {
+    font-size: 2.5rem;
+  }
+  
+  .sacha-spotlight {
+    padding: 40px 50px;
+  }
+}
