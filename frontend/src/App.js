@@ -719,12 +719,14 @@ function App() {
       case 'tweak':
       case 'tweaker':
       case 'tweaking':
-        // Flash Derk image first, then show game
-        setShowDerkFlash(true);
+        // Show game popup first, then flash Derk after a moment
+        setShowIwbtc(true);
         setTimeout(() => {
-          setShowDerkFlash(false);
-          setShowIwbtc(true);
-        }, 500); // Show flash for 500ms (half second)
+          setShowDerkFlash(true);
+          setTimeout(() => {
+            setShowDerkFlash(false);
+          }, 500); // Show flash for 500ms
+        }, 100); // Small delay before flash
         discoverSecret('tweak_game');
         break;
       case 'smiling friends':
