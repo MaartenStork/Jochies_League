@@ -2023,7 +2023,7 @@ function App() {
           <div className="hollow-knight-modal" onClick={(e) => e.stopPropagation()}>
             <div className="hollow-knight-header">
               <div className="hollow-knight-title-section">
-                <h2>🎮 I Wanna Be The Cat</h2>
+                <h2> Tweak Gimma </h2>
                 <p className="hollow-knight-subtitle">dit doe je niet voor een bonus maar voor de love of the game</p>
               </div>
               <button className="hollow-knight-close" onClick={() => setShowIwbtc(false)}>✕</button>
